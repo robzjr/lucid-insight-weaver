@@ -99,7 +99,7 @@ const InterpretationDisplay = ({
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-dream-navy leading-relaxed">{interp.content}</p>
+                  <p className="text-dream-navy leading-relaxed text-slate-50">{interp.content}</p>
                 </CardContent>
               </Card>)}
         </>}
