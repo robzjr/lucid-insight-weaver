@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Book, User, Calendar } from 'lucide-react';
 import Header from '@/components/Header';
@@ -143,22 +142,28 @@ const Index = () => {
   const getScreenTitle = () => {
     switch (currentScreen) {
       case 'home': return 'DreamLens';
-      case 'interpretation': return 'Dream Analysis';
-      case 'history': return 'Dream Journal';
-      case 'settings': return 'Settings';
+      case 'interpretation': return 'Neural Analysis';
+      case 'history': return 'Dream Archive';
+      case 'settings': return 'Interface Config';
       default: return 'DreamLens';
     }
   };
 
   return (
-    <div className="min-h-screen bg-dream-light pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950/10 to-slate-950 pb-24 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      </div>
+
       <Header 
         title={getScreenTitle()}
         onSettingsClick={() => setCurrentScreen('settings')}
         onProfileClick={() => setCurrentScreen('settings')}
       />
       
-      <div className="pt-4">
+      <div className="pt-4 relative z-10">
         {currentScreen === 'home' && (
           <DreamInput
             onSubmit={handleDreamSubmit}
