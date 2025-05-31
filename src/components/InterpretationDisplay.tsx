@@ -52,7 +52,7 @@ const InterpretationDisplay = ({
           <CardTitle className="text-sm text-dream-gray font-bold text-slate-50">Your Dream</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-dream-navy text-slate-50">{dreamText}</p>
+          <p className="text-sm text-dream-navy text-neutral-50">{dreamText}</p>
         </CardContent>
       </Card>
 
