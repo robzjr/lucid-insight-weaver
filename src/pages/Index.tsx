@@ -1,17 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Book, User, Calendar } from 'lucide-react';
 import Header from '@/components/Header';
-import AuthScreen from '@/components/AuthScreen';
+import AuthPage from '@/components/AuthPage';
 import DreamInput from '@/components/DreamInput';
 import InterpretationDisplay from '@/components/InterpretationDisplay';
 import DreamHistory from '@/components/DreamHistory';
 import Settings from '@/components/Settings';
 import Navigation from '@/components/Navigation';
-
-interface UserData {
-  email: string;
-  name: string;
-}
+import { useAuth } from '@/hooks/useAuth';
 
 interface SavedDream {
   id: string;
@@ -31,7 +27,7 @@ interface UserPreferences {
 }
 
 const Index = () => {
-  const [user, setUser] = useState<UserData | null>(null);
+  const { user, loading, signOut } = useAuth();
   const [currentScreen, setCurrentScreen] = useState<'home' | 'interpretation' | 'history' | 'settings'>('home');
   const [currentDream, setCurrentDream] = useState<string>('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -75,12 +71,8 @@ const Index = () => {
     }
   ];
 
-  const handleAuth = (userData: UserData) => {
-    setUser(userData);
-  };
-
-  const handleLogout = () => {
-    setUser(null);
+  const handleLogout = async () => {
+    await signOut();
     setCurrentScreen('home');
     setSavedDreams([]);
     setCurrentDream('');
@@ -145,8 +137,20 @@ const Index = () => {
     }
   };
 
+  // Show loading spinner while checking auth state
+  if (loading) {
+    return (
+      <div className={`min-h-screen flex items-center justify-center ${
+        isDark ? 'bg-slate-950' : 'bg-white'
+      }`}>
+        <div className="w-8 h-8 border-2 border-purple-500/30 border-t-purple-500 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  // Show auth page if user is not logged in
   if (!user) {
-    return <AuthScreen onAuth={handleAuth} isDark={isDark} onThemeToggle={handleThemeToggle} />;
+    return <AuthPage isDark={isDark} onThemeToggle={handleThemeToggle} />;
   }
 
   const getScreenTitle = () => {
@@ -218,7 +222,7 @@ const Index = () => {
             userPreferences={userPreferences}
             onUpdatePreferences={setUserPreferences}
             onLogout={handleLogout}
-            userEmail={user.email}
+            userEmail={user.email || ''}
             isDark={isDark}
           />
         )}
