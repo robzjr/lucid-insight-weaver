@@ -1,51 +1,55 @@
 
 import React from 'react';
-import { User, Settings, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Settings, User, Zap } from 'lucide-react';
+import ThemeToggle from './ThemeToggle';
 
 interface HeaderProps {
   title: string;
-  showProfile?: boolean;
-  onProfileClick?: () => void;
-  onSettingsClick?: () => void;
+  onSettingsClick: () => void;
+  onProfileClick: () => void;
+  isDark?: boolean;
+  onThemeToggle?: () => void;
 }
 
-const Header = ({ title, showProfile = true, onProfileClick, onSettingsClick }: HeaderProps) => {
+const Header = ({ title, onSettingsClick, onProfileClick, isDark = true, onThemeToggle }: HeaderProps) => {
   return (
-    <div className="glass-card border-b border-slate-800/50 p-4 sticky top-0 z-50">
-      <div className="flex items-center justify-between max-w-md mx-auto">
+    <header className="sticky top-0 z-50 w-full border-b border-slate-800/50 bg-slate-950/80 backdrop-blur-xl">
+      <div className="flex h-16 items-center justify-between px-4">
         <div className="flex items-center space-x-3">
-          <div className="relative w-10 h-10 bg-gradient-to-br from-purple-500 to-cyan-400 rounded-xl flex items-center justify-center neon-glow">
-            <Zap className="w-5 h-5 text-white" />
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-cyan-400 rounded-xl opacity-20 animate-pulse"></div>
+          <div className="relative">
+            <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-cyan-400 rounded-lg flex items-center justify-center">
+              <Zap className="w-4 h-4 text-white" />
+            </div>
           </div>
-          <h1 className="text-xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+          <h1 className="text-lg font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
             {title}
           </h1>
         </div>
         
-        {showProfile && (
-          <div className="flex space-x-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-slate-400 hover:text-purple-400 hover:bg-slate-800/50 border border-slate-800/50 hover:border-purple-500/50 transition-all duration-300"
-              onClick={onSettingsClick}
-            >
-              <Settings className="h-5 w-5" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-slate-400 hover:text-cyan-400 hover:bg-slate-800/50 border border-slate-800/50 hover:border-cyan-500/50 transition-all duration-300"
-              onClick={onProfileClick}
-            >
-              <User className="h-5 w-5" />
-            </Button>
-          </div>
-        )}
+        <div className="flex items-center space-x-2">
+          {onThemeToggle && (
+            <ThemeToggle isDark={isDark} onToggle={onThemeToggle} />
+          )}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onProfileClick}
+            className="text-slate-400 hover:text-white hover:bg-slate-800/50"
+          >
+            <User className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onSettingsClick}
+            className="text-slate-400 hover:text-white hover:bg-slate-800/50"
+          >
+            <Settings className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
-    </div>
+    </header>
   );
 };
 

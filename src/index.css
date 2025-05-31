@@ -45,6 +45,45 @@
     --dream-dark: 240 10% 3.9%;
     --dream-card: 240 10% 8%;
   }
+
+  .light {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+
+    --primary: 263 70% 50%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 263 70% 50%;
+
+    --dream-navy: 240 5% 6%;
+    --dream-gold: 45 93% 65%;
+    --dream-teal: 180 100% 50%;
+    --dream-purple: 263 70% 50%;
+    --dream-cyan: 191 91% 36%;
+    --dream-gray: 240 5% 16%;
+    --dream-dark: 240 10% 96.1%;
+    --dream-card: 240 10% 92%;
+  }
 }
 
 @layer base {
@@ -55,8 +94,16 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, hsl(240 5% 6%) 0%, hsl(240 10% 3.9%) 100%);
     min-height: 100vh;
+    transition: all 0.3s ease;
+  }
+
+  body.dark {
+    background: linear-gradient(135deg, hsl(240 5% 6%) 0%, hsl(240 10% 3.9%) 100%);
+  }
+
+  body.light {
+    background: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(240 5% 96%) 100%);
   }
 }
 
@@ -86,6 +133,10 @@
     @apply bg-slate-900/30 backdrop-blur-xl border border-slate-800/50;
   }
 
+  .light .glass-card {
+    @apply bg-white/30 backdrop-blur-xl border border-slate-200/50;
+  }
+
   .neon-glow {
     box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
   }
@@ -109,6 +160,21 @@
   .cyber-border:hover::before {
     left: 100%;
   }
+
+  /* Ensure all text is white in dark mode */
+  .dark .text-slate-950 { @apply text-white; }
+  .dark .text-slate-900 { @apply text-white; }
+  .dark .text-slate-800 { @apply text-white; }
+  .dark .text-slate-700 { @apply text-white; }
+  .dark .text-slate-600 { @apply text-white; }
+  .dark .text-gray-600 { @apply text-white; }
+  .dark .text-gray-700 { @apply text-white; }
+
+  /* Light mode text colors */
+  .light .text-slate-50 { @apply text-slate-900; }
+  .light .text-neutral-50 { @apply text-slate-900; }
+  .light .text-slate-400 { @apply text-slate-600; }
+  .light .text-slate-300 { @apply text-slate-700; }
 }
 
 @keyframes pulse-glow {

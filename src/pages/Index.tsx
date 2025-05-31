@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Book, User, Calendar } from 'lucide-react';
 import Header from '@/components/Header';
 import AuthScreen from '@/components/AuthScreen';
@@ -37,12 +37,18 @@ const Index = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [savedDreams, setSavedDreams] = useState<SavedDream[]>([]);
   const [viewingDream, setViewingDream] = useState<SavedDream | null>(null);
+  const [isDark, setIsDark] = useState(true);
   
   const [userPreferences, setUserPreferences] = useState<UserPreferences>({
     showIslamic: true,
     showSpiritual: true,
     showPsychological: true,
   });
+
+  // Apply theme to body
+  useEffect(() => {
+    document.body.className = isDark ? 'dark' : 'light';
+  }, [isDark]);
 
   // Mock AI interpretations
   const mockInterpretations = [
@@ -79,6 +85,10 @@ const Index = () => {
     setSavedDreams([]);
     setCurrentDream('');
     setViewingDream(null);
+  };
+
+  const handleThemeToggle = () => {
+    setIsDark(!isDark);
   };
 
   const handleDreamSubmit = async (dreamText: string) => {
@@ -136,7 +146,7 @@ const Index = () => {
   };
 
   if (!user) {
-    return <AuthScreen onAuth={handleAuth} />;
+    return <AuthScreen onAuth={handleAuth} isDark={isDark} onThemeToggle={handleThemeToggle} />;
   }
 
   const getScreenTitle = () => {
@@ -150,17 +160,27 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950/10 to-slate-950 pb-24 relative overflow-hidden">
+    <div className={`min-h-screen pb-24 relative overflow-hidden transition-all duration-300 ${
+      isDark 
+        ? 'bg-gradient-to-br from-slate-950 via-purple-950/10 to-slate-950' 
+        : 'bg-gradient-to-br from-white via-purple-50/20 to-slate-50'
+    }`}>
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className={`absolute top-0 left-1/4 w-96 h-96 rounded-full blur-3xl animate-pulse ${
+          isDark ? 'bg-purple-500/5' : 'bg-purple-500/10'
+        }`}></div>
+        <div className={`absolute bottom-0 right-1/4 w-64 h-64 rounded-full blur-3xl animate-pulse delay-1000 ${
+          isDark ? 'bg-cyan-500/5' : 'bg-cyan-500/10'
+        }`}></div>
       </div>
 
       <Header 
         title={getScreenTitle()}
         onSettingsClick={() => setCurrentScreen('settings')}
         onProfileClick={() => setCurrentScreen('settings')}
+        isDark={isDark}
+        onThemeToggle={handleThemeToggle}
       />
       
       <div className="pt-4 relative z-10">
@@ -168,6 +188,7 @@ const Index = () => {
           <DreamInput
             onSubmit={handleDreamSubmit}
             isAnalyzing={isAnalyzing}
+            isDark={isDark}
           />
         )}
         
@@ -179,6 +200,7 @@ const Index = () => {
             onToggleVisibility={handleToggleVisibility}
             onSaveDream={handleSaveDream}
             onNewDream={handleNewDream}
+            isDark={isDark}
           />
         )}
         
@@ -187,6 +209,7 @@ const Index = () => {
             dreams={savedDreams}
             onViewDream={handleViewDream}
             onNewDream={handleNewDream}
+            isDark={isDark}
           />
         )}
         
@@ -196,6 +219,7 @@ const Index = () => {
             onUpdatePreferences={setUserPreferences}
             onLogout={handleLogout}
             userEmail={user.email}
+            isDark={isDark}
           />
         )}
       </div>
@@ -203,6 +227,7 @@ const Index = () => {
       <Navigation
         activeScreen={currentScreen}
         onNavigate={handleNavigate}
+        isDark={isDark}
       />
     </div>
   );
