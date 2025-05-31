@@ -21,9 +21,10 @@ interface DreamHistoryProps {
   dreams: SavedDream[];
   onViewDream: (dream: SavedDream) => void;
   onNewDream: () => void;
+  isDark?: boolean;
 }
 
-const DreamHistory = ({ dreams, onViewDream, onNewDream }: DreamHistoryProps) => {
+const DreamHistory = ({ dreams, onViewDream, onNewDream, isDark = true }: DreamHistoryProps) => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredDreams = dreams.filter(dream =>
@@ -32,26 +33,37 @@ const DreamHistory = ({ dreams, onViewDream, onNewDream }: DreamHistoryProps) =>
 
   return (
     <div className="max-w-md mx-auto p-4 space-y-4">
-      <Card>
+      <Card className={isDark ? 'glass-card' : 'bg-white border-slate-200'}>
         <CardHeader>
-          <CardTitle className="text-dream-navy">Dream Journal</CardTitle>
+          <CardTitle className={isDark ? 'text-white' : 'text-slate-900'}>Dream Journal</CardTitle>
           <Input
             placeholder="Search your dreams..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="mt-2"
+            className={`mt-2 ${
+              isDark 
+                ? 'bg-slate-900/50 border-slate-700 text-slate-200 placeholder:text-slate-500' 
+                : 'bg-white border-slate-300 text-slate-900 placeholder:text-slate-400'
+            }`}
           />
         </CardHeader>
       </Card>
 
       {filteredDreams.length === 0 ? (
-        <Card>
+        <Card className={isDark ? 'glass-card' : 'bg-white border-slate-200'}>
           <CardContent className="text-center py-8">
-            <Calendar className="h-12 w-12 text-dream-gray mx-auto mb-4" />
-            <p className="text-dream-gray mb-4">
+            <Calendar className={`h-12 w-12 mx-auto mb-4 ${isDark ? 'text-slate-400' : 'text-slate-500'}`} />
+            <p className={`mb-4 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
               {dreams.length === 0 ? "No dreams recorded yet" : "No dreams match your search"}
             </p>
-            <Button onClick={onNewDream} className="bg-dream-navy hover:bg-slate-700">
+            <Button 
+              onClick={onNewDream} 
+              className={`${
+                isDark 
+                  ? 'bg-slate-800 hover:bg-slate-700 text-white' 
+                  : 'bg-purple-600 hover:bg-purple-700 text-white'
+              }`}
+            >
               Record Your First Dream
             </Button>
           </CardContent>
@@ -59,11 +71,16 @@ const DreamHistory = ({ dreams, onViewDream, onNewDream }: DreamHistoryProps) =>
       ) : (
         <div className="space-y-3">
           {filteredDreams.map((dream) => (
-            <Card key={dream.id} className="cursor-pointer hover:shadow-md transition-shadow">
+            <Card 
+              key={dream.id} 
+              className={`cursor-pointer hover:shadow-md transition-shadow ${
+                isDark ? 'glass-card hover:bg-slate-800/30' : 'bg-white border-slate-200 hover:bg-slate-50'
+              }`}
+            >
               <CardContent className="p-4" onClick={() => onViewDream(dream)}>
                 <div className="flex justify-between items-start mb-2">
                   <div className="flex-1">
-                    <p className="text-sm text-dream-navy line-clamp-3">
+                    <p className={`text-sm line-clamp-3 ${isDark ? 'text-white' : 'text-slate-900'}`}>
                       {dream.dreamText}
                     </p>
                   </div>
@@ -84,7 +101,7 @@ const DreamHistory = ({ dreams, onViewDream, onNewDream }: DreamHistoryProps) =>
                       Psychology
                     </Badge>
                   </div>
-                  <span className="text-xs text-dream-gray">{dream.date}</span>
+                  <span className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{dream.date}</span>
                 </div>
               </CardContent>
             </Card>
@@ -92,7 +109,14 @@ const DreamHistory = ({ dreams, onViewDream, onNewDream }: DreamHistoryProps) =>
         </div>
       )}
 
-      <Button onClick={onNewDream} className="w-full bg-dream-navy hover:bg-slate-700">
+      <Button 
+        onClick={onNewDream} 
+        className={`w-full ${
+          isDark 
+            ? 'bg-slate-800 hover:bg-slate-700 text-white' 
+            : 'bg-purple-600 hover:bg-purple-700 text-white'
+        }`}
+      >
         Analyze New Dream
       </Button>
     </div>

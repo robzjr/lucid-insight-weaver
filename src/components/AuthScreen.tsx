@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,9 +7,11 @@ import { Zap, Brain, Eye } from 'lucide-react';
 
 interface AuthScreenProps {
   onAuth: (user: { email: string; name: string }) => void;
+  isDark?: boolean;
+  onThemeToggle?: () => void;
 }
 
-const AuthScreen = ({ onAuth }: AuthScreenProps) => {
+const AuthScreen = ({ onAuth, isDark = true, onThemeToggle }: AuthScreenProps) => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,15 +23,29 @@ const AuthScreen = ({ onAuth }: AuthScreenProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950/20 to-slate-950 flex items-center justify-center p-4 relative overflow-hidden">
+    <div className={`min-h-screen flex items-center justify-center p-4 relative overflow-hidden transition-all duration-300 ${
+      isDark 
+        ? 'bg-gradient-to-br from-slate-950 via-purple-950/20 to-slate-950' 
+        : 'bg-gradient-to-br from-white via-purple-50/20 to-slate-50'
+    }`}>
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-3/4 left-1/2 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl animate-pulse delay-500"></div>
+        <div className={`absolute top-1/4 left-1/4 w-64 h-64 rounded-full blur-3xl animate-pulse ${
+          isDark ? 'bg-purple-500/10' : 'bg-purple-500/20'
+        }`}></div>
+        <div className={`absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full blur-3xl animate-pulse delay-1000 ${
+          isDark ? 'bg-cyan-500/10' : 'bg-cyan-500/20'
+        }`}></div>
+        <div className={`absolute top-3/4 left-1/2 w-32 h-32 rounded-full blur-2xl animate-pulse delay-500 ${
+          isDark ? 'bg-amber-500/10' : 'bg-amber-500/20'
+        }`}></div>
       </div>
 
-      <Card className="w-full max-w-md glass-card border-slate-800/50 relative z-10">
+      <Card className={`w-full max-w-md relative z-10 ${
+        isDark 
+          ? 'glass-card border-slate-800/50' 
+          : 'bg-white/90 backdrop-blur-xl border-slate-200/50'
+      }`}>
         <CardHeader className="text-center space-y-4">
           <div className="flex items-center justify-center mb-6">
             <div className="relative">
@@ -45,48 +60,60 @@ const AuthScreen = ({ onAuth }: AuthScreenProps) => {
           <CardTitle className="text-3xl font-bold bg-gradient-to-r from-purple-400 via-cyan-400 to-amber-400 bg-clip-text text-transparent">
             DreamLens
           </CardTitle>
-          <p className="text-slate-400">Neural interface for subconscious exploration</p>
+          <p className={isDark ? 'text-slate-400' : 'text-slate-600'}>Neural interface for subconscious exploration</p>
         </CardHeader>
         
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
               <div>
-                <Label htmlFor="name" className="text-slate-300">Neural Identity</Label>
+                <Label htmlFor="name" className={isDark ? 'text-slate-300' : 'text-slate-700'}>Neural Identity</Label>
                 <Input
                   id="name"
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required={!isLogin}
-                  className="mt-1 bg-slate-900/50 border-slate-700 text-slate-200 focus:border-purple-500 focus:ring-purple-500/20"
+                  className={`mt-1 ${
+                    isDark 
+                      ? 'bg-slate-900/50 border-slate-700 text-slate-200 focus:border-purple-500 focus:ring-purple-500/20' 
+                      : 'bg-white/50 border-slate-300 text-slate-900 focus:border-purple-500 focus:ring-purple-500/20'
+                  }`}
                   placeholder="Enter your identity"
                 />
               </div>
             )}
             
             <div>
-              <Label htmlFor="email" className="text-slate-300">Access Code</Label>
+              <Label htmlFor="email" className={isDark ? 'text-slate-300' : 'text-slate-700'}>Access Code</Label>
               <Input
                 id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="mt-1 bg-slate-900/50 border-slate-700 text-slate-200 focus:border-cyan-500 focus:ring-cyan-500/20"
+                className={`mt-1 ${
+                  isDark 
+                    ? 'bg-slate-900/50 border-slate-700 text-slate-200 focus:border-cyan-500 focus:ring-cyan-500/20' 
+                    : 'bg-white/50 border-slate-300 text-slate-900 focus:border-cyan-500 focus:ring-cyan-500/20'
+                }`}
                 placeholder="neural@dreamlens.ai"
               />
             </div>
             
             <div>
-              <Label htmlFor="password" className="text-slate-300">Neural Key</Label>
+              <Label htmlFor="password" className={isDark ? 'text-slate-300' : 'text-slate-700'}>Neural Key</Label>
               <Input
                 id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="mt-1 bg-slate-900/50 border-slate-700 text-slate-200 focus:border-amber-500 focus:ring-amber-500/20"
+                className={`mt-1 ${
+                  isDark 
+                    ? 'bg-slate-900/50 border-slate-700 text-slate-200 focus:border-amber-500 focus:ring-amber-500/20' 
+                    : 'bg-white/50 border-slate-300 text-slate-900 focus:border-amber-500 focus:ring-amber-500/20'
+                }`}
                 placeholder="Enter neural passkey"
               />
             </div>
@@ -106,7 +133,11 @@ const AuthScreen = ({ onAuth }: AuthScreenProps) => {
             <Button
               variant="link"
               onClick={() => setIsLogin(!isLogin)}
-              className="text-slate-400 hover:text-purple-400 transition-colors"
+              className={`transition-colors ${
+                isDark 
+                  ? 'text-slate-400 hover:text-purple-400' 
+                  : 'text-slate-600 hover:text-purple-600'
+              }`}
             >
               {isLogin ? "Need neural access? Initialize new link" : "Already connected? Access interface"}
             </Button>

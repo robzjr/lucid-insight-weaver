@@ -9,9 +9,10 @@ import { Sparkles, Brain } from 'lucide-react';
 interface DreamInputProps {
   onSubmit: (dream: string) => void;
   isAnalyzing: boolean;
+  isDark?: boolean;
 }
 
-const DreamInput = ({ onSubmit, isAnalyzing }: DreamInputProps) => {
+const DreamInput = ({ onSubmit, isAnalyzing, isDark = true }: DreamInputProps) => {
   const [dreamText, setDreamText] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -23,7 +24,11 @@ const DreamInput = ({ onSubmit, isAnalyzing }: DreamInputProps) => {
 
   return (
     <div className="max-w-md mx-auto p-4">
-      <Card className="glass-card border-slate-800/50 cyber-border">
+      <Card className={`cyber-border ${
+        isDark 
+          ? 'glass-card border-slate-800/50' 
+          : 'bg-white/90 backdrop-blur-xl border-slate-200/50'
+      }`}>
         <CardHeader className="text-center">
           <div className="flex items-center justify-center mb-4">
             <div className="relative">
@@ -34,7 +39,7 @@ const DreamInput = ({ onSubmit, isAnalyzing }: DreamInputProps) => {
           <CardTitle className="bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent text-xl">
             Neural Dream Analysis
           </CardTitle>
-          <p className="text-slate-400 text-sm">
+          <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
             Describe your dream and unlock its hidden meanings through AI consciousness
           </p>
         </CardHeader>
@@ -42,13 +47,17 @@ const DreamInput = ({ onSubmit, isAnalyzing }: DreamInputProps) => {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="dream" className="text-slate-300 font-medium">Dream Sequence</Label>
+              <Label htmlFor="dream" className={`font-medium ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>Dream Sequence</Label>
               <Textarea
                 id="dream"
                 value={dreamText}
                 onChange={(e) => setDreamText(e.target.value)}
                 placeholder="I found myself in a digital landscape where thoughts became visible as flowing streams of light..."
-                className="mt-2 min-h-36 resize-none bg-slate-900/50 border-slate-700 text-slate-200 placeholder:text-slate-500 focus:border-purple-500 focus:ring-purple-500/20 transition-all duration-300"
+                className={`mt-2 min-h-36 resize-none transition-all duration-300 ${
+                  isDark 
+                    ? 'bg-slate-900/50 border-slate-700 text-slate-200 placeholder:text-slate-500 focus:border-purple-500 focus:ring-purple-500/20' 
+                    : 'bg-white/50 border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-purple-500 focus:ring-purple-500/20'
+                }`}
                 disabled={isAnalyzing}
               />
             </div>
@@ -74,7 +83,11 @@ const DreamInput = ({ onSubmit, isAnalyzing }: DreamInputProps) => {
             </Button>
           </form>
           
-          <div className="mt-6 text-xs text-slate-500 text-center border-t border-slate-800 pt-4">
+          <div className={`mt-6 text-xs text-center border-t pt-4 ${
+            isDark 
+              ? 'text-slate-500 border-slate-800' 
+              : 'text-slate-400 border-slate-200'
+          }`}>
             <div className="flex items-center justify-center space-x-1">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
               <span>Secure neural processing • Multi-dimensional analysis • Privacy protected</span>
