@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Book, User, Calendar } from 'lucide-react';
 import Header from '@/components/Header';
@@ -8,125 +9,86 @@ import DreamHistory from '@/components/DreamHistory';
 import Settings from '@/components/Settings';
 import Navigation from '@/components/Navigation';
 import { useAuth } from '@/hooks/useAuth';
-
-interface SavedDream {
-  id: string;
-  dreamText: string;
-  date: string;
-  interpretations: {
-    islamic: string;
-    spiritual: string;
-    psychological: string;
-  };
-}
-
-interface UserPreferences {
-  showIslamic: boolean;
-  showSpiritual: boolean;
-  showPsychological: boolean;
-}
+import { useDreams } from '@/hooks/useDreams';
+import { useUserPreferences } from '@/hooks/useUserPreferences';
 
 const Index = () => {
   const { user, loading, signOut } = useAuth();
+  const { dreams, interpretDream, saveDream, isInterpreting, interpretationResult } = useDreams();
+  const { preferences, updatePreferences } = useUserPreferences();
+  
   const [currentScreen, setCurrentScreen] = useState<'home' | 'interpretation' | 'history' | 'settings'>('home');
   const [currentDream, setCurrentDream] = useState<string>('');
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [savedDreams, setSavedDreams] = useState<SavedDream[]>([]);
-  const [viewingDream, setViewingDream] = useState<SavedDream | null>(null);
+  const [viewingDream, setViewingDream] = useState<any>(null);
   const [isDark, setIsDark] = useState(true);
-  
-  const [userPreferences, setUserPreferences] = useState<UserPreferences>({
-    showIslamic: true,
-    showSpiritual: true,
-    showPsychological: true,
-  });
+  const [currentInterpretations, setCurrentInterpretations] = useState<any>(null);
+
+  // Sync theme with preferences
+  useEffect(() => {
+    if (preferences?.theme) {
+      setIsDark(preferences.theme === 'dark');
+    }
+  }, [preferences?.theme]);
 
   // Apply theme to body
   useEffect(() => {
     document.body.className = isDark ? 'dark' : 'light';
   }, [isDark]);
 
-  // Mock AI interpretations
-  const mockInterpretations = [
-    {
-      type: 'islamic' as const,
-      title: 'Islamic',
-      content: 'In Islamic tradition, this dream may represent spiritual purification and guidance. The symbols in your dream often relate to your spiritual journey and connection with Allah. Consider reflecting on your prayers and seeking clarity in your faith.',
-      icon: <Book className="h-4 w-4" />,
-      color: 'bg-green-600'
-    },
-    {
-      type: 'spiritual' as const,
-      title: 'Spiritual',
-      content: 'From a spiritual perspective, your dream appears to be guiding you toward inner wisdom and transformation. The imagery suggests you are on a path of personal growth and spiritual awakening. Trust your intuition as you navigate this journey.',
-      icon: <User className="h-4 w-4" />,
-      color: 'bg-dream-teal'
-    },
-    {
-      type: 'psychological' as const,
-      title: 'Psychological',
-      content: 'Psychologically, this dream may reflect your subconscious processing of recent experiences or emotions. The symbols could represent aspects of your personality or situations in your waking life that need attention or resolution.',
-      icon: <Calendar className="h-4 w-4" />,
-      color: 'bg-blue-600'
+  // Handle interpretation result
+  useEffect(() => {
+    if (interpretationResult) {
+      setCurrentInterpretations(interpretationResult);
+      setCurrentScreen('interpretation');
     }
-  ];
+  }, [interpretationResult]);
 
   const handleLogout = async () => {
     await signOut();
     setCurrentScreen('home');
-    setSavedDreams([]);
     setCurrentDream('');
     setViewingDream(null);
+    setCurrentInterpretations(null);
   };
 
   const handleThemeToggle = () => {
-    setIsDark(!isDark);
+    const newTheme = !isDark;
+    setIsDark(newTheme);
+    updatePreferences({ theme: newTheme ? 'dark' : 'light' });
   };
 
   const handleDreamSubmit = async (dreamText: string) => {
     setCurrentDream(dreamText);
-    setIsAnalyzing(true);
-    
-    // Simulate AI analysis delay
-    setTimeout(() => {
-      setIsAnalyzing(false);
-      setCurrentScreen('interpretation');
-    }, 2000);
+    interpretDream(dreamText);
   };
 
   const handleSaveDream = () => {
-    const newDream: SavedDream = {
-      id: Date.now().toString(),
-      dreamText: currentDream,
-      date: new Date().toLocaleDateString(),
-      interpretations: {
-        islamic: mockInterpretations[0].content,
-        spiritual: mockInterpretations[1].content,
-        psychological: mockInterpretations[2].content,
-      }
-    };
-    
-    setSavedDreams(prev => [newDream, ...prev]);
-    setCurrentScreen('history');
+    if (currentDream && currentInterpretations) {
+      saveDream({
+        dreamText: currentDream,
+        interpretations: currentInterpretations
+      });
+      setCurrentScreen('history');
+    }
   };
 
   const handleNewDream = () => {
     setCurrentDream('');
     setViewingDream(null);
+    setCurrentInterpretations(null);
     setCurrentScreen('home');
   };
 
-  const handleViewDream = (dream: SavedDream) => {
+  const handleViewDream = (dream: any) => {
     setViewingDream(dream);
     setCurrentDream(dream.dreamText);
+    setCurrentInterpretations(dream.interpretations);
     setCurrentScreen('interpretation');
   };
 
   const handleToggleVisibility = (type: string, visible: boolean) => {
-    setUserPreferences(prev => ({
-      ...prev,
-      [`show${type.charAt(0).toUpperCase() + type.slice(1)}`]: visible
-    }));
+    const key = `show${type.charAt(0).toUpperCase() + type.slice(1)}` as keyof typeof preferences;
+    updatePreferences({ [key]: visible });
   };
 
   const handleNavigate = (screen: string) => {
@@ -134,6 +96,7 @@ const Index = () => {
     if (screen === 'home') {
       setCurrentDream('');
       setViewingDream(null);
+      setCurrentInterpretations(null);
     }
   };
 
@@ -163,6 +126,31 @@ const Index = () => {
     }
   };
 
+  // Create mock interpretations for the display component
+  const mockInterpretations = currentInterpretations ? [
+    {
+      type: 'islamic' as const,
+      title: 'Islamic',
+      content: currentInterpretations.islamic || 'No Islamic interpretation available.',
+      icon: <Book className="h-4 w-4" />,
+      color: 'bg-green-600'
+    },
+    {
+      type: 'spiritual' as const,
+      title: 'Spiritual',
+      content: currentInterpretations.spiritual || 'No spiritual interpretation available.',
+      icon: <User className="h-4 w-4" />,
+      color: 'bg-dream-teal'
+    },
+    {
+      type: 'psychological' as const,
+      title: 'Psychological',
+      content: currentInterpretations.psychological || 'No psychological interpretation available.',
+      icon: <Calendar className="h-4 w-4" />,
+      color: 'bg-blue-600'
+    }
+  ] : [];
+
   return (
     <div className={`min-h-screen pb-24 relative overflow-hidden transition-all duration-300 ${
       isDark 
@@ -191,7 +179,7 @@ const Index = () => {
         {currentScreen === 'home' && (
           <DreamInput
             onSubmit={handleDreamSubmit}
-            isAnalyzing={isAnalyzing}
+            isAnalyzing={isInterpreting}
             isDark={isDark}
           />
         )}
@@ -200,7 +188,7 @@ const Index = () => {
           <InterpretationDisplay
             dreamText={currentDream}
             interpretations={mockInterpretations}
-            userPreferences={userPreferences}
+            userPreferences={preferences}
             onToggleVisibility={handleToggleVisibility}
             onSaveDream={handleSaveDream}
             onNewDream={handleNewDream}
@@ -210,7 +198,7 @@ const Index = () => {
         
         {currentScreen === 'history' && (
           <DreamHistory
-            dreams={savedDreams}
+            dreams={dreams}
             onViewDream={handleViewDream}
             onNewDream={handleNewDream}
             isDark={isDark}
@@ -219,8 +207,8 @@ const Index = () => {
         
         {currentScreen === 'settings' && (
           <Settings
-            userPreferences={userPreferences}
-            onUpdatePreferences={setUserPreferences}
+            userPreferences={preferences}
+            onUpdatePreferences={updatePreferences}
             onLogout={handleLogout}
             userEmail={user.email || ''}
             isDark={isDark}

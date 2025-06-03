@@ -9,6 +9,62 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      dreams: {
+        Row: {
+          created_at: string
+          dream_text: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          dream_text: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          dream_text?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      interpretations: {
+        Row: {
+          content: string
+          created_at: string
+          dream_id: string
+          id: string
+          type: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          dream_id: string
+          id?: string
+          type: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          dream_id?: string
+          id?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interpretations_dream_id_fkey"
+            columns: ["dream_id"]
+            isOneToOne: false
+            referencedRelation: "dreams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -30,6 +86,33 @@ export type Database = {
           id?: string
           name?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      user_preferences: {
+        Row: {
+          show_islamic: boolean
+          show_psychological: boolean
+          show_spiritual: boolean
+          theme: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          show_islamic?: boolean
+          show_psychological?: boolean
+          show_spiritual?: boolean
+          theme?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          show_islamic?: boolean
+          show_psychological?: boolean
+          show_spiritual?: boolean
+          theme?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }

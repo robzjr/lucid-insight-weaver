@@ -6,11 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Book, User } from 'lucide-react';
 
-interface SavedDream {
+interface Dream {
   id: string;
   dreamText: string;
-  date: string;
-  interpretations: {
+  createdAt: string;
+  interpretations?: {
     islamic: string;
     spiritual: string;
     psychological: string;
@@ -18,8 +18,8 @@ interface SavedDream {
 }
 
 interface DreamHistoryProps {
-  dreams: SavedDream[];
-  onViewDream: (dream: SavedDream) => void;
+  dreams: Dream[];
+  onViewDream: (dream: Dream) => void;
   onNewDream: () => void;
   isDark?: boolean;
 }
@@ -88,20 +88,26 @@ const DreamHistory = ({ dreams, onViewDream, onNewDream, isDark = true }: DreamH
                 
                 <div className="flex justify-between items-center mt-3">
                   <div className="flex space-x-1">
-                    <Badge variant="secondary" className="text-xs">
-                      <Book className="h-3 w-3 mr-1" />
-                      Islamic
-                    </Badge>
-                    <Badge variant="secondary" className="text-xs">
-                      <User className="h-3 w-3 mr-1" />
-                      Spiritual
-                    </Badge>
-                    <Badge variant="secondary" className="text-xs">
-                      <Calendar className="h-3 w-3 mr-1" />
-                      Psychology
-                    </Badge>
+                    {dream.interpretations?.islamic && (
+                      <Badge variant="secondary" className="text-xs">
+                        <Book className="h-3 w-3 mr-1" />
+                        Islamic
+                      </Badge>
+                    )}
+                    {dream.interpretations?.spiritual && (
+                      <Badge variant="secondary" className="text-xs">
+                        <User className="h-3 w-3 mr-1" />
+                        Spiritual
+                      </Badge>
+                    )}
+                    {dream.interpretations?.psychological && (
+                      <Badge variant="secondary" className="text-xs">
+                        <Calendar className="h-3 w-3 mr-1" />
+                        Psychology
+                      </Badge>
+                    )}
                   </div>
-                  <span className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{dream.date}</span>
+                  <span className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{dream.createdAt}</span>
                 </div>
               </CardContent>
             </Card>
