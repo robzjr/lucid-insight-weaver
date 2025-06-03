@@ -109,16 +109,36 @@ export const useDreams = () => {
 
   const interpretDreamMutation = useMutation({
     mutationFn: async (dreamText: string) => {
+      console.log('Starting dream interpretation...');
+      
       const { data, error } = await supabase.functions.invoke('interpret-dream', {
         body: { dreamText }
       });
 
-      if (error) throw error;
+      console.log('Supabase function response:', { data, error });
+
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw new Error(`API Error: ${error.message || 'Unknown error occurred'}`);
+      }
+      
+      if (!data?.interpretations) {
+        console.error('Invalid response structure:', data);
+        throw new Error('Invalid response from dream interpretation service');
+      }
+
       return data.interpretations;
     },
     onError: (error) => {
       console.error('Error interpreting dream:', error);
-      toast.error('Failed to analyze dream. Please try again.');
+      
+      if (error.message.includes('Google AI API key not configured')) {
+        toast.error('Google AI API key is not configured. Please contact support.');
+      } else if (error.message.includes('API Error')) {
+        toast.error(`Analysis failed: ${error.message}`);
+      } else {
+        toast.error('Failed to analyze dream. Please try again.');
+      }
     },
   });
 
