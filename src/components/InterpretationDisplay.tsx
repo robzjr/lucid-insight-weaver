@@ -38,8 +38,17 @@ const InterpretationDisplay = ({
   onNewDream,
   isDark = true
 }: InterpretationDisplayProps) => {
-  const [activeTab, setActiveTab] = useState<string>('islamic');
+  // Get the first visible interpretation as the default active tab
+  const getFirstVisibleType = () => {
+    if (userPreferences.showIslamic) return 'islamic';
+    if (userPreferences.showSpiritual) return 'spiritual';
+    if (userPreferences.showPsychological) return 'psychological';
+    return 'islamic'; // fallback
+  };
 
+  const [activeTab, setActiveTab] = useState<string>(getFirstVisibleType());
+
+  // Filter interpretations based on user preferences
   const visibleInterpretations = interpretations.filter(interp => {
     switch (interp.type) {
       case 'islamic':
@@ -53,10 +62,17 @@ const InterpretationDisplay = ({
     }
   });
 
+  // Update active tab when preferences change
+  React.useEffect(() => {
+    if (visibleInterpretations.length > 0 && !visibleInterpretations.find(i => i.type === activeTab)) {
+      setActiveTab(visibleInterpretations[0].type);
+    }
+  }, [userPreferences, visibleInterpretations, activeTab]);
+
   return (
-    <div className="max-w-md mx-auto p-4 space-y-4">
+    <div className="max-w-md mx-auto p-4 space-y-4 slide-up">
       {/* Dream Summary */}
-      <Card className={isDark ? 'glass-card' : 'bg-white border-slate-200'}>
+      <Card className={`${isDark ? 'glass-card' : 'bg-white border-slate-200'} fade-in-scale cyber-border`}>
         <CardHeader>
           <CardTitle className={`text-sm font-bold ${isDark ? 'text-slate-50' : 'text-slate-900'}`}>
             Your Dream
@@ -70,9 +86,9 @@ const InterpretationDisplay = ({
       </Card>
 
       {/* Visibility Controls */}
-      <Card className={isDark ? 'glass-card' : 'bg-white border-slate-200'}>
+      <Card className={`${isDark ? 'glass-card' : 'bg-white border-slate-200'} fade-in-scale cyber-border`}>
         <CardHeader>
-          <CardTitle className={`text-sm ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+          <CardTitle className={`text-sm hologram-text ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
             Choose Your Perspective
           </CardTitle>
         </CardHeader>
@@ -85,6 +101,7 @@ const InterpretationDisplay = ({
               id="islamic-toggle" 
               checked={userPreferences.showIslamic} 
               onCheckedChange={checked => onToggleVisibility('islamic', checked)} 
+              className="transition-all duration-300"
             />
           </div>
           <div className="flex items-center justify-between">
@@ -95,6 +112,7 @@ const InterpretationDisplay = ({
               id="spiritual-toggle" 
               checked={userPreferences.showSpiritual} 
               onCheckedChange={checked => onToggleVisibility('spiritual', checked)} 
+              className="transition-all duration-300"
             />
           </div>
           <div className="flex items-center justify-between">
@@ -105,6 +123,7 @@ const InterpretationDisplay = ({
               id="psychological-toggle" 
               checked={userPreferences.showPsychological} 
               onCheckedChange={checked => onToggleVisibility('psychological', checked)} 
+              className="transition-all duration-300"
             />
           </div>
         </CardContent>
@@ -113,14 +132,14 @@ const InterpretationDisplay = ({
       {/* Interpretation Tabs */}
       {visibleInterpretations.length > 0 && (
         <>
-          <div className={`flex space-x-1 p-1 rounded-lg ${isDark ? 'bg-slate-800/50' : 'bg-gray-100'}`}>
+          <div className={`flex space-x-1 p-1 rounded-lg ${isDark ? 'bg-slate-800/50' : 'bg-gray-100'} fade-in-scale`}>
             {visibleInterpretations.map(interp => (
               <button
                 key={interp.type}
                 onClick={() => setActiveTab(interp.type)}
-                className={`flex-1 py-2 px-3 rounded-md text-xs font-medium transition-colors ${
+                className={`flex-1 py-2 px-3 rounded-md text-xs font-medium transition-all duration-300 transform hover:scale-105 ${
                   activeTab === interp.type 
-                    ? `${interp.color} text-white` 
+                    ? `${interp.color} text-white neon-glow` 
                     : isDark 
                       ? 'text-slate-300 hover:bg-slate-700/50' 
                       : 'text-gray-600 hover:bg-gray-200'
@@ -139,7 +158,7 @@ const InterpretationDisplay = ({
             activeTab === interp.type && (
               <Card 
                 key={interp.type} 
-                className={`border-l-4 ${
+                className={`border-l-4 fade-in-scale cyber-border ${
                   isDark ? 'glass-card' : 'bg-white border-slate-200'
                 }`}
                 style={{ borderLeftColor: interp.color.replace('bg-', '#') }}
@@ -147,7 +166,7 @@ const InterpretationDisplay = ({
                 <CardHeader>
                   <div className="flex items-center space-x-2">
                     {interp.icon}
-                    <CardTitle className={`text-lg ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                    <CardTitle className={`text-lg hologram-text ${isDark ? 'text-white' : 'text-slate-900'}`}>
                       {interp.title} Perspective
                     </CardTitle>
                   </div>
@@ -164,7 +183,7 @@ const InterpretationDisplay = ({
       )}
 
       {visibleInterpretations.length === 0 && (
-        <Card className={isDark ? 'glass-card' : 'bg-white border-slate-200'}>
+        <Card className={`${isDark ? 'glass-card' : 'bg-white border-slate-200'} fade-in-scale`}>
           <CardContent className="text-center py-8">
             <p className={isDark ? 'text-slate-300' : 'text-slate-600'}>
               No interpretations are currently visible. Choose at least one perspective above to see your dream analysis.
@@ -174,10 +193,10 @@ const InterpretationDisplay = ({
       )}
 
       {/* Action Buttons */}
-      <div className="flex space-x-2">
+      <div className="flex space-x-2 fade-in-scale">
         <Button 
           onClick={onSaveDream} 
-          className={`flex-1 ${
+          className={`flex-1 transition-all duration-300 transform hover:scale-105 hover:neon-glow ${
             isDark 
               ? 'bg-slate-800 hover:bg-slate-700 text-white' 
               : 'bg-purple-600 hover:bg-purple-700 text-white'
@@ -188,9 +207,9 @@ const InterpretationDisplay = ({
         <Button 
           onClick={onNewDream} 
           variant="outline" 
-          className={`flex-1 ${
+          className={`flex-1 transition-all duration-300 transform hover:scale-105 ${
             isDark 
-              ? 'border-slate-600 text-slate-300 hover:bg-slate-800/50' 
+              ? 'border-slate-600 text-slate-300 hover:bg-slate-800/50 hover:neon-glow' 
               : 'border-purple-600 text-purple-600 hover:bg-purple-50'
           }`}
         >

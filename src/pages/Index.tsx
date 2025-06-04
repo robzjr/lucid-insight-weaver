@@ -103,10 +103,10 @@ const Index = () => {
   // Show loading spinner while checking auth state
   if (loading) {
     return (
-      <div className={`min-h-screen flex items-center justify-center ${
+      <div className={`min-h-screen flex items-center justify-center matrix-grid ${
         isDark ? 'bg-slate-950' : 'bg-white'
       }`}>
-        <div className="w-8 h-8 border-2 border-purple-500/30 border-t-purple-500 rounded-full animate-spin"></div>
+        <div className="w-8 h-8 border-2 border-purple-500/30 border-t-purple-500 rounded-full animate-spin glow-pulse"></div>
       </div>
     );
   }
@@ -152,18 +152,21 @@ const Index = () => {
   ] : [];
 
   return (
-    <div className={`min-h-screen pb-24 relative overflow-hidden transition-all duration-300 ${
+    <div className={`min-h-screen pb-24 relative overflow-hidden transition-all duration-500 matrix-grid ${
       isDark 
         ? 'bg-gradient-to-br from-slate-950 via-purple-950/10 to-slate-950' 
         : 'bg-gradient-to-br from-white via-purple-50/20 to-slate-50'
     }`}>
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className={`absolute top-0 left-1/4 w-96 h-96 rounded-full blur-3xl animate-pulse ${
+        <div className={`absolute top-0 left-1/4 w-96 h-96 rounded-full blur-3xl floating-element ${
           isDark ? 'bg-purple-500/5' : 'bg-purple-500/10'
         }`}></div>
-        <div className={`absolute bottom-0 right-1/4 w-64 h-64 rounded-full blur-3xl animate-pulse delay-1000 ${
+        <div className={`absolute bottom-0 right-1/4 w-64 h-64 rounded-full blur-3xl floating-element delay-1000 ${
           isDark ? 'bg-cyan-500/5' : 'bg-cyan-500/10'
+        }`}></div>
+        <div className={`absolute top-1/2 left-1/2 w-32 h-32 rounded-full blur-2xl floating-element delay-500 ${
+          isDark ? 'bg-purple-400/3' : 'bg-purple-400/8'
         }`}></div>
       </div>
 
