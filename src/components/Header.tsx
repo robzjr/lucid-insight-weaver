@@ -19,7 +19,7 @@ const Header = ({ title, onSettingsClick, onProfileClick, isDark = true, onTheme
         <div className="flex items-center space-x-3">
           <div className="relative">
             <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-cyan-400 rounded-lg flex items-center justify-center">
-              <Zap className="w-4 h-4 text-white" />
+              <span className="text-white text-sm font-bold">R</span>
             </div>
           </div>
           <h1 className="text-lg font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">

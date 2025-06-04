@@ -73,13 +73,13 @@ const InterpretationDisplay = ({
       <Card className={isDark ? 'glass-card' : 'bg-white border-slate-200'}>
         <CardHeader>
           <CardTitle className={`text-sm ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-            Show Interpretations
+            Choose Your Perspective
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex items-center justify-between">
             <Label htmlFor="islamic-toggle" className={`text-sm ${isDark ? 'text-white' : 'text-slate-700'}`}>
-              Islamic Perspective
+              Islamic Interpretation
             </Label>
             <Switch 
               id="islamic-toggle" 
@@ -99,7 +99,7 @@ const InterpretationDisplay = ({
           </div>
           <div className="flex items-center justify-between">
             <Label htmlFor="psychological-toggle" className={`text-sm ${isDark ? 'text-white' : 'text-slate-700'}`}>
-              Psychological Perspective
+              Psychological Analysis
             </Label>
             <Switch 
               id="psychological-toggle" 
@@ -167,7 +167,7 @@ const InterpretationDisplay = ({
         <Card className={isDark ? 'glass-card' : 'bg-white border-slate-200'}>
           <CardContent className="text-center py-8">
             <p className={isDark ? 'text-slate-300' : 'text-slate-600'}>
-              No interpretations are currently visible. Enable at least one perspective above to see your dream analysis.
+              No interpretations are currently visible. Choose at least one perspective above to see your dream analysis.
             </p>
           </CardContent>
         </Card>
@@ -183,7 +183,7 @@ const InterpretationDisplay = ({
               : 'bg-purple-600 hover:bg-purple-700 text-white'
           }`}
         >
-          Save to Journal
+          Save to My Library
         </Button>
         <Button 
           onClick={onNewDream} 

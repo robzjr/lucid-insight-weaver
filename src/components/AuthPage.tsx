@@ -108,18 +108,21 @@ const AuthPage = ({ isDark = true, onThemeToggle }: AuthPageProps) => {
           <div className="flex items-center justify-center mb-6">
             <div className="relative">
               <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-cyan-400 rounded-2xl flex items-center justify-center neon-glow">
-                <Zap className="w-10 h-10 text-white" />
+                <span className="text-white text-2xl">🌙</span>
               </div>
               <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full flex items-center justify-center">
-                <Eye className="w-3 h-3 text-white" />
+                <span className="text-white text-xs">✨</span>
               </div>
             </div>
           </div>
           <CardTitle className="text-3xl font-bold bg-gradient-to-r from-purple-400 via-cyan-400 to-amber-400 bg-clip-text text-transparent">
-            DreamLens
+            {isLogin ? 'Step Back Into the Dreamworld' : 'Welcome to Ramel'}
           </CardTitle>
           <p className={isDark ? 'text-slate-400' : 'text-slate-600'}>
-            {isLogin ? 'Neural interface connection' : 'Initialize neural link'}
+            {isLogin 
+              ? 'Take a deep breath… and recall your last dream. Ready to uncover its meaning?' 
+              : 'Where your dreams whisper, and meanings unfold.'
+            }
           </p>
         </CardHeader>
         
@@ -138,7 +141,7 @@ const AuthPage = ({ isDark = true, onThemeToggle }: AuthPageProps) => {
                       ? 'bg-slate-900/50 border-slate-700 text-slate-200 focus:border-purple-500 focus:ring-purple-500/20' 
                       : 'bg-white/50 border-slate-300 text-slate-900 focus:border-purple-500 focus:ring-purple-500/20'
                   }`}
-                  placeholder="Enter your name"
+                  placeholder="Your dreamer name"
                 />
               </div>
             )}
@@ -156,7 +159,7 @@ const AuthPage = ({ isDark = true, onThemeToggle }: AuthPageProps) => {
                     ? 'bg-slate-900/50 border-slate-700 text-slate-200 focus:border-cyan-500 focus:ring-cyan-500/20' 
                     : 'bg-white/50 border-slate-300 text-slate-900 focus:border-cyan-500 focus:ring-cyan-500/20'
                 }`}
-                placeholder="neural@dreamlens.ai"
+                placeholder="Enter your email… the bridge from reality"
               />
             </div>
             
@@ -173,7 +176,7 @@ const AuthPage = ({ isDark = true, onThemeToggle }: AuthPageProps) => {
                     ? 'bg-slate-900/50 border-slate-700 text-slate-200 focus:border-amber-500 focus:ring-amber-500/20' 
                     : 'bg-white/50 border-slate-300 text-slate-900 focus:border-amber-500 focus:ring-amber-500/20'
                 }`}
-                placeholder="Enter your password"
+                placeholder="Secret key to the dream gate"
                 minLength={6}
               />
             </div>
@@ -187,14 +190,14 @@ const AuthPage = ({ isDark = true, onThemeToggle }: AuthPageProps) => {
                 {isLoading ? (
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                 ) : (
-                  <Brain className="w-4 h-4" />
+                  <span>🔮</span>
                 )}
                 <span>
                   {isLoading 
                     ? 'Processing...' 
                     : isLogin 
-                      ? 'Interface Connection' 
-                      : 'Initialize Neural Link'
+                      ? 'Unlock the Portal' 
+                      : 'Begin My Journey'
                   }
                 </span>
               </div>
@@ -211,7 +214,10 @@ const AuthPage = ({ isDark = true, onThemeToggle }: AuthPageProps) => {
                   : 'text-slate-600 hover:text-purple-600'
               }`}
             >
-              {isLogin ? "Need neural access? Initialize new link" : "Already connected? Access interface"}
+              {isLogin 
+                ? "Start your journey into the unseen ✨" 
+                : "Already have an account? Step back into the dreamworld"
+              }
             </Button>
           </div>
         </CardContent>

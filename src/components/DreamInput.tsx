@@ -32,27 +32,28 @@ const DreamInput = ({ onSubmit, isAnalyzing, isDark = true }: DreamInputProps) =
         <CardHeader className="text-center">
           <div className="flex items-center justify-center mb-4">
             <div className="relative">
-              <Brain className="w-8 h-8 text-purple-400" />
-              <Sparkles className="w-4 h-4 text-cyan-400 absolute -top-1 -right-1 animate-pulse" />
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-cyan-400 rounded-full flex items-center justify-center">
+                <span className="text-white text-xl">🌙</span>
+              </div>
             </div>
           </div>
           <CardTitle className="bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent text-xl">
-            Neural Dream Analysis
+            Speak, Dreamer…
           </CardTitle>
           <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-            Describe your dream and unlock its hidden meanings through AI consciousness
+            Have a dream you can't shake off? Tell Ramel all about it.
           </p>
         </CardHeader>
         
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="dream" className={`font-medium ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>Dream Sequence</Label>
+              <Label htmlFor="dream" className={`font-medium ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>Your Dream</Label>
               <Textarea
                 id="dream"
                 value={dreamText}
                 onChange={(e) => setDreamText(e.target.value)}
-                placeholder="I found myself in a digital landscape where thoughts became visible as flowing streams of light..."
+                placeholder="Could you describe your dream in as much detail as you remember? Even the smallest details matter..."
                 className={`mt-2 min-h-36 resize-none transition-all duration-300 ${
                   isDark 
                     ? 'bg-slate-900/50 border-slate-700 text-slate-200 placeholder:text-slate-500 focus:border-purple-500 focus:ring-purple-500/20' 
@@ -72,12 +73,12 @@ const DreamInput = ({ onSubmit, isAnalyzing, isDark = true }: DreamInputProps) =
               {isAnalyzing ? (
                 <div className="flex items-center space-x-2">
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  <span>Processing Neural Patterns...</span>
+                  <span>Interpreting your dream...</span>
                 </div>
               ) : (
                 <div className="flex items-center space-x-2">
-                  <Brain className="w-4 h-4" />
-                  <span>Initiate Analysis</span>
+                  <span>✨</span>
+                  <span>Interpret My Dream</span>
                 </div>
               )}
             </Button>
@@ -90,7 +91,7 @@ const DreamInput = ({ onSubmit, isAnalyzing, isDark = true }: DreamInputProps) =
           }`}>
             <div className="flex items-center justify-center space-x-1">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span>Secure neural processing • Multi-dimensional analysis • Privacy protected</span>
+              <span>Your dreams, your space • Everything stays between you and Ramel</span>
             </div>
           </div>
         </CardContent>

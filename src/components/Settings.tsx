@@ -36,7 +36,7 @@ const Settings = ({
     <div className="max-w-md mx-auto p-4 space-y-4">
       <Card className={isDark ? 'glass-card' : 'bg-white border-slate-200'}>
         <CardHeader>
-          <CardTitle className={isDark ? 'text-white' : 'text-slate-900'}>Account</CardTitle>
+          <CardTitle className={isDark ? 'text-white' : 'text-slate-900'}>My Info</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
@@ -48,9 +48,9 @@ const Settings = ({
 
       <Card className={isDark ? 'glass-card' : 'bg-white border-slate-200'}>
         <CardHeader>
-          <CardTitle className={isDark ? 'text-white' : 'text-slate-900'}>Default Interpretation Preferences</CardTitle>
+          <CardTitle className={isDark ? 'text-white' : 'text-slate-900'}>Dream Interpretation Preferences</CardTitle>
           <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-            Choose which perspectives are shown by default for all your dreams
+            Choose which perspectives Ramel shows you by default
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -98,12 +98,13 @@ const Settings = ({
 
       <Card className={isDark ? 'glass-card' : 'bg-white border-slate-200'}>
         <CardHeader>
-          <CardTitle className={isDark ? 'text-white' : 'text-slate-900'}>About DreamLens</CardTitle>
+          <CardTitle className={isDark ? 'text-white' : 'text-slate-900'}>About Ramel</CardTitle>
         </CardHeader>
         <CardContent>
           <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-            DreamLens uses advanced AI to provide thoughtful dream interpretations from multiple perspectives. 
+            Ramel helps you understand your dreams through thoughtful interpretations from multiple perspectives. 
             Your dreams are private and analyzed with respect for different cultural and spiritual viewpoints.
+            Everything you share stays between you and Ramel. We protect your secrets like they're sacred.
           </p>
         </CardContent>
       </Card>

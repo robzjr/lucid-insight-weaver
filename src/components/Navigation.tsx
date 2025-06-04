@@ -12,8 +12,8 @@ interface NavigationProps {
 const Navigation = ({ activeScreen, onNavigate, isDark = true }: NavigationProps) => {
   const navItems = [
     { id: 'home', label: 'Home', icon: Home },
-    { id: 'history', label: 'Journal', icon: Book },
-    { id: 'settings', label: 'Settings', icon: Settings },
+    { id: 'history', label: 'Library', icon: Book },
+    { id: 'settings', label: 'Profile', icon: Settings },
   ];
 
   return (
