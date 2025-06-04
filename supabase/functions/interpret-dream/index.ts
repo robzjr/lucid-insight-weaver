@@ -38,7 +38,7 @@ serve(async (req) => {
 
     console.log('Generating interpretations...')
     
-    // Create interpretations using Google AI Studio
+    // Create interpretations using Google AI Studio with Gemini 2.5 Flash Preview
     const interpretations = await Promise.all([
       generateInterpretation(dreamText, 'islamic', googleAiApiKey),
       generateInterpretation(dreamText, 'spiritual', googleAiApiKey),
@@ -86,7 +86,7 @@ async function generateInterpretation(dreamText: string, perspective: string, ap
   console.log(`Generating ${perspective} interpretation...`)
 
   try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
