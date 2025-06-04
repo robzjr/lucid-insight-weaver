@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Book, User, Calendar } from 'lucide-react';
 import Header from '@/components/Header';
@@ -117,9 +118,9 @@ const Index = () => {
 
   const getScreenTitle = () => {
     switch (currentScreen) {
-      case 'home': return 'Good to see you, Dreamer 🌙';
-      case 'interpretation': return 'The Dream Speaks…';
-      case 'history': return 'My Dream Archive 📖';
+      case 'home': return 'Good to see you, Dreamer';
+      case 'interpretation': return 'The Dream Speaks...';
+      case 'history': return 'My Dream Archive';
       case 'settings': return 'Profile & Settings';
       default: return 'Ramel';
     }
@@ -171,7 +172,6 @@ const Index = () => {
         onSettingsClick={() => setCurrentScreen('settings')}
         onProfileClick={() => setCurrentScreen('settings')}
         isDark={isDark}
-        onThemeToggle={handleThemeToggle}
       />
       
       <div className="pt-4 relative z-10">
@@ -211,6 +211,7 @@ const Index = () => {
             onLogout={handleLogout}
             userEmail={user.email || ''}
             isDark={isDark}
+            onThemeToggle={handleThemeToggle}
           />
         )}
       </div>

@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Sparkles, Brain } from 'lucide-react';
 
 interface DreamInputProps {
   onSubmit: (dream: string) => void;
@@ -33,12 +32,12 @@ const DreamInput = ({ onSubmit, isAnalyzing, isDark = true }: DreamInputProps) =
           <div className="flex items-center justify-center mb-4">
             <div className="relative">
               <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-cyan-400 rounded-full flex items-center justify-center">
-                <span className="text-white text-xl">🌙</span>
+                <div className="w-6 h-6 bg-white/20 rounded-full"></div>
               </div>
             </div>
           </div>
           <CardTitle className="bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent text-xl">
-            Speak, Dreamer…
+            Speak, Dreamer...
           </CardTitle>
           <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
             Have a dream you can't shake off? Tell Ramel all about it.
@@ -77,7 +76,7 @@ const DreamInput = ({ onSubmit, isAnalyzing, isDark = true }: DreamInputProps) =
                 </div>
               ) : (
                 <div className="flex items-center space-x-2">
-                  <span>✨</span>
+                  <div className="w-4 h-4 bg-white/20 rounded-full"></div>
                   <span>Interpret My Dream</span>
                 </div>
               )}

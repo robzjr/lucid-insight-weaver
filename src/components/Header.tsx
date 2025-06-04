@@ -1,18 +1,16 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Settings, User, Zap } from 'lucide-react';
-import ThemeToggle from './ThemeToggle';
+import { Settings, User } from 'lucide-react';
 
 interface HeaderProps {
   title: string;
   onSettingsClick: () => void;
   onProfileClick: () => void;
   isDark?: boolean;
-  onThemeToggle?: () => void;
 }
 
-const Header = ({ title, onSettingsClick, onProfileClick, isDark = true, onThemeToggle }: HeaderProps) => {
+const Header = ({ title, onSettingsClick, onProfileClick, isDark = true }: HeaderProps) => {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-800/50 bg-slate-950/80 backdrop-blur-xl">
       <div className="flex h-16 items-center justify-between px-4">
@@ -28,9 +26,6 @@ const Header = ({ title, onSettingsClick, onProfileClick, isDark = true, onTheme
         </div>
         
         <div className="flex items-center space-x-2">
-          {onThemeToggle && (
-            <ThemeToggle isDark={isDark} onToggle={onThemeToggle} />
-          )}
           <Button
             variant="ghost"
             size="icon"

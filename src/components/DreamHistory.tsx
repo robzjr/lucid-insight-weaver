@@ -27,7 +27,10 @@ interface DreamHistoryProps {
 const DreamHistory = ({ dreams, onViewDream, onNewDream, isDark = true }: DreamHistoryProps) => {
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredDreams = dreams.filter(dream =>
+  // Only show dreams that have been saved (have interpretations)
+  const savedDreams = dreams.filter(dream => dream.interpretations);
+  
+  const filteredDreams = savedDreams.filter(dream =>
     dream.dreamText.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -35,9 +38,9 @@ const DreamHistory = ({ dreams, onViewDream, onNewDream, isDark = true }: DreamH
     <div className="max-w-md mx-auto p-4 space-y-4">
       <Card className={isDark ? 'glass-card' : 'bg-white border-slate-200'}>
         <CardHeader>
-          <CardTitle className={isDark ? 'text-white' : 'text-slate-900'}>My Dream Archive 📖</CardTitle>
+          <CardTitle className={isDark ? 'text-white' : 'text-slate-900'}>My Dream Archive</CardTitle>
           <Input
-            placeholder="Search for a symbol… e.g., 'snake', 'mirror', 'falling'"
+            placeholder="Search for a symbol... e.g., 'snake', 'mirror', 'falling'"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className={`mt-2 ${
@@ -54,8 +57,8 @@ const DreamHistory = ({ dreams, onViewDream, onNewDream, isDark = true }: DreamH
           <CardContent className="text-center py-8">
             <Calendar className={`h-12 w-12 mx-auto mb-4 ${isDark ? 'text-slate-400' : 'text-slate-500'}`} />
             <p className={`mb-4 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-              {dreams.length === 0 
-                ? "No dreams logged yet. Time to start listening to your sleeping self with Ramel." 
+              {savedDreams.length === 0 
+                ? "No dreams saved yet. Time to start listening to your sleeping self with Ramel." 
                 : "No dreams match your search"
               }
             </p>
@@ -67,7 +70,7 @@ const DreamHistory = ({ dreams, onViewDream, onNewDream, isDark = true }: DreamH
                   : 'bg-purple-600 hover:bg-purple-700 text-white'
               }`}
             >
-              Start Dream Entry ✍️
+              Start Dream Entry
             </Button>
           </CardContent>
         </Card>

@@ -16,6 +16,7 @@ interface SettingsProps {
   onLogout: () => void;
   userEmail: string;
   isDark?: boolean;
+  onThemeToggle: () => void;
 }
 
 const Settings = ({
@@ -23,7 +24,8 @@ const Settings = ({
   onUpdatePreferences,
   onLogout,
   userEmail,
-  isDark = true
+  isDark = true,
+  onThemeToggle
 }: SettingsProps) => {
   const handlePreferenceChange = (key: string, value: boolean) => {
     onUpdatePreferences({
@@ -42,6 +44,24 @@ const Settings = ({
           <div className="space-y-2">
             <Label className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>Email</Label>
             <p className={isDark ? 'text-white' : 'text-slate-900'}>{userEmail}</p>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className={isDark ? 'glass-card' : 'bg-white border-slate-200'}>
+        <CardHeader>
+          <CardTitle className={isDark ? 'text-white' : 'text-slate-900'}>Theme & Aesthetics</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between">
+            <div>
+              <Label className={`font-medium ${isDark ? 'text-white' : 'text-slate-900'}`}>Dark Mode</Label>
+              <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>Switch between light and dark themes</p>
+            </div>
+            <Switch 
+              checked={isDark} 
+              onCheckedChange={onThemeToggle} 
+            />
           </div>
         </CardContent>
       </Card>
