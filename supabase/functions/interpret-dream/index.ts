@@ -36,13 +36,17 @@ serve(async (req) => {
       )
     }
 
+    // Detect if the dream text contains Arabic characters
+    const isArabic = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/.test(dreamText)
+    console.log('Detected Arabic text:', isArabic)
+
     console.log('Generating interpretations...')
     
-    // Create interpretations using Google AI Studio with Gemini 2.5 Flash Preview
+    // Create interpretations using Google AI Studio with Gemini 2.0 Flash Preview
     const interpretations = await Promise.all([
-      generateInterpretation(dreamText, 'islamic', googleAiApiKey),
-      generateInterpretation(dreamText, 'spiritual', googleAiApiKey),
-      generateInterpretation(dreamText, 'psychological', googleAiApiKey)
+      generateInterpretation(dreamText, 'islamic', googleAiApiKey, isArabic),
+      generateInterpretation(dreamText, 'spiritual', googleAiApiKey, isArabic),
+      generateInterpretation(dreamText, 'psychological', googleAiApiKey, isArabic)
     ])
 
     console.log('All interpretations generated successfully')
@@ -76,14 +80,20 @@ serve(async (req) => {
   }
 })
 
-async function generateInterpretation(dreamText: string, perspective: string, apiKey: string): Promise<string> {
+async function generateInterpretation(dreamText: string, perspective: string, apiKey: string, isArabic: boolean): Promise<string> {
   const prompts = {
-    islamic: `As an Islamic scholar, provide a thoughtful interpretation of this dream according to Islamic tradition and teachings. Focus on spiritual guidance and references to Islamic principles: "${dreamText}"`,
-    spiritual: `As a spiritual guide, provide an interpretation of this dream from a universal spiritual perspective, focusing on personal growth, symbolism, and inner wisdom: "${dreamText}"`,
-    psychological: `As a psychologist, provide an interpretation of this dream from a psychological perspective, focusing on subconscious processes, emotional patterns, and mental states: "${dreamText}"`
+    islamic: isArabic 
+      ? `كعالم إسلامي، قدم تفسيراً مدروساً لهذا الحلم وفقاً للتقاليد والتعاليم الإسلامية. ركز على الإرشاد الروحي والمراجع للمبادئ الإسلامية: "${dreamText}"`
+      : `As an Islamic scholar, provide a thoughtful interpretation of this dream according to Islamic tradition and teachings. Focus on spiritual guidance and references to Islamic principles: "${dreamText}"`,
+    spiritual: isArabic
+      ? `كمرشد روحي، قدم تفسيراً لهذا الحلم من منظور روحي شامل، مع التركيز على النمو الشخصي والرمزية والحكمة الداخلية: "${dreamText}"`
+      : `As a spiritual guide, provide an interpretation of this dream from a universal spiritual perspective, focusing on personal growth, symbolism, and inner wisdom: "${dreamText}"`,
+    psychological: isArabic
+      ? `كطبيب نفسي، قدم تفسيراً لهذا الحلم من منظور نفسي، مع التركيز على العمليات اللاوعية والأنماط العاطفية والحالات الذهنية: "${dreamText}"`
+      : `As a psychologist, provide an interpretation of this dream from a psychological perspective, focusing on subconscious processes, emotional patterns, and mental states: "${dreamText}"`
   }
 
-  console.log(`Generating ${perspective} interpretation...`)
+  console.log(`Generating ${perspective} interpretation (Arabic: ${isArabic})...`)
 
   try {
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`, {

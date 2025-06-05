@@ -123,6 +123,10 @@ const Index = () => {
     }
   };
 
+  const handleUpgrade = () => {
+    setShowPaymentModal(true);
+  };
+
   // Show loading spinner while checking auth state
   if (loading) {
     return (
@@ -244,6 +248,7 @@ const Index = () => {
             userEmail={user.email || ''}
             isDark={isDark}
             onThemeToggle={handleThemeToggle}
+            onUpgrade={handleUpgrade}
           />
         )}
       </div>

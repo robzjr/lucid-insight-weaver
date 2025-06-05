@@ -5,6 +5,9 @@ import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
+import { Sparkles, Zap, Crown } from 'lucide-react';
+import { useUserUsage } from '@/hooks/useUserUsage';
 
 interface SettingsProps {
   userPreferences: {
@@ -17,6 +20,7 @@ interface SettingsProps {
   userEmail: string;
   isDark?: boolean;
   onThemeToggle: () => void;
+  onUpgrade: () => void;
 }
 
 const Settings = ({
@@ -25,14 +29,20 @@ const Settings = ({
   onLogout,
   userEmail,
   isDark = true,
-  onThemeToggle
+  onThemeToggle,
+  onUpgrade
 }: SettingsProps) => {
+  const { usage, interpretationsLeft } = useUserUsage();
+  
   const handlePreferenceChange = (key: string, value: boolean) => {
     onUpdatePreferences({
       ...userPreferences,
       [key]: value
     });
   };
+
+  const isPremiumUser = usage?.paid_interpretations_remaining > 0;
+  const planType = isPremiumUser ? 'Premium' : 'Free';
 
   return (
     <div className="max-w-md mx-auto p-4 space-y-4">
@@ -45,6 +55,58 @@ const Settings = ({
             <Label className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>Email</Label>
             <p className={isDark ? 'text-white' : 'text-slate-900'}>{userEmail}</p>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card className={isDark ? 'glass-card' : 'bg-white border-slate-200'}>
+        <CardHeader>
+          <CardTitle className={isDark ? 'text-white' : 'text-slate-900'}>Current Plan</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              {isPremiumUser ? (
+                <Crown className={`h-5 w-5 ${isDark ? 'text-purple-400' : 'text-purple-600'}`} />
+              ) : (
+                <Sparkles className={`h-5 w-5 ${isDark ? 'text-blue-400' : 'text-blue-600'}`} />
+              )}
+              <div>
+                <p className={`font-medium ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                  {planType} Plan
+                </p>
+                <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                  {interpretationsLeft} interpretations remaining
+                </p>
+              </div>
+            </div>
+            <Badge 
+              variant={isPremiumUser ? 'default' : 'secondary'}
+              className={isPremiumUser 
+                ? 'bg-purple-500/20 text-purple-400 border-purple-500/30' 
+                : 'bg-blue-500/20 text-blue-400 border-blue-500/30'
+              }
+            >
+              {planType}
+            </Badge>
+          </div>
+          
+          {!isPremiumUser && (
+            <>
+              <Separator />
+              <div className="text-center">
+                <p className={`text-sm mb-3 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                  Upgrade to Premium for unlimited interpretations and enhanced features
+                </p>
+                <Button 
+                  onClick={onUpgrade}
+                  className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 text-white font-semibold py-2 rounded-xl transition-all duration-300"
+                >
+                  <Zap className="h-4 w-4 mr-2" />
+                  Upgrade to Premium
+                </Button>
+              </div>
+            </>
+          )}
         </CardContent>
       </Card>
 
