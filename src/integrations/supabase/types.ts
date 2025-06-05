@@ -65,6 +65,45 @@ export type Database = {
           },
         ]
       }
+      payment_transactions: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          currency: string
+          id: string
+          interpretations_granted: number
+          payment_date: string | null
+          paymob_transaction_id: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string
+          currency?: string
+          id?: string
+          interpretations_granted?: number
+          payment_date?: string | null
+          paymob_transaction_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          interpretations_granted?: number
+          payment_date?: string | null
+          paymob_transaction_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -111,6 +150,36 @@ export type Database = {
           show_psychological?: boolean
           show_spiritual?: boolean
           theme?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_usage: {
+        Row: {
+          created_at: string
+          free_interpretations_used: number
+          id: string
+          last_payment_date: string | null
+          paid_interpretations_remaining: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          free_interpretations_used?: number
+          id?: string
+          last_payment_date?: string | null
+          paid_interpretations_remaining?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          free_interpretations_used?: number
+          id?: string
+          last_payment_date?: string | null
+          paid_interpretations_remaining?: number
           updated_at?: string
           user_id?: string
         }

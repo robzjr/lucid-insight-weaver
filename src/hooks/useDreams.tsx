@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useUserUsage } from '@/hooks/useUserUsage';
 import { toast } from 'sonner';
 
 export interface Dream {
@@ -18,6 +19,7 @@ export interface Dream {
 
 export const useDreams = () => {
   const { user } = useAuth();
+  const { canInterpret, incrementUsage } = useUserUsage();
   const queryClient = useQueryClient();
 
   const { data: dreams = [], isLoading } = useQuery({
@@ -109,6 +111,11 @@ export const useDreams = () => {
 
   const interpretDreamMutation = useMutation({
     mutationFn: async (dreamText: string) => {
+      // Check if user can interpret before proceeding
+      if (!canInterpret) {
+        throw new Error('PAYMENT_REQUIRED');
+      }
+
       console.log('Starting dream interpretation...');
       
       const { data, error } = await supabase.functions.invoke('interpret-dream', {
@@ -127,12 +134,18 @@ export const useDreams = () => {
         throw new Error('Invalid response from dream interpretation service');
       }
 
+      // Increment usage after successful interpretation
+      incrementUsage();
+
       return data.interpretations;
     },
     onError: (error) => {
       console.error('Error interpreting dream:', error);
       
-      if (error.message.includes('Google AI API key not configured')) {
+      if (error.message === 'PAYMENT_REQUIRED') {
+        // Don't show toast here, let the component handle it
+        return;
+      } else if (error.message.includes('Google AI API key not configured')) {
         toast.error('Google AI API key is not configured. Please contact support.');
       } else if (error.message.includes('API Error')) {
         toast.error(`Analysis failed: ${error.message}`);

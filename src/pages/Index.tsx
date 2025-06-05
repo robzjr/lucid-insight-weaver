@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Book, User, Calendar } from 'lucide-react';
 import Header from '@/components/Header';
@@ -8,20 +7,25 @@ import InterpretationDisplay from '@/components/InterpretationDisplay';
 import DreamHistory from '@/components/DreamHistory';
 import Settings from '@/components/Settings';
 import Navigation from '@/components/Navigation';
+import UsageDisplay from '@/components/UsageDisplay';
+import PaymentModal from '@/components/PaymentModal';
 import { useAuth } from '@/hooks/useAuth';
 import { useDreams } from '@/hooks/useDreams';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
+import { useUserUsage } from '@/hooks/useUserUsage';
 
 const Index = () => {
   const { user, loading, signOut } = useAuth();
-  const { dreams, interpretDream, saveDream, isInterpreting, interpretationResult } = useDreams();
+  const { dreams, interpretDream, saveDream, isInterpreting, interpretationResult, interpretationError } = useDreams();
   const { preferences, updatePreferences } = useUserPreferences();
+  const { usage, canInterpret, interpretationsLeft } = useUserUsage();
   
   const [currentScreen, setCurrentScreen] = useState<'home' | 'interpretation' | 'history' | 'settings'>('home');
   const [currentDream, setCurrentDream] = useState<string>('');
   const [viewingDream, setViewingDream] = useState<any>(null);
   const [isDark, setIsDark] = useState(true);
   const [currentInterpretations, setCurrentInterpretations] = useState<any>(null);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   // Sync theme with preferences
   useEffect(() => {
@@ -58,8 +62,27 @@ const Index = () => {
   };
 
   const handleDreamSubmit = async (dreamText: string) => {
+    if (!canInterpret) {
+      setShowPaymentModal(true);
+      return;
+    }
+    
     setCurrentDream(dreamText);
-    interpretDream(dreamText);
+    try {
+      await interpretDream(dreamText);
+    } catch (error: any) {
+      if (error.message === 'PAYMENT_REQUIRED') {
+        setShowPaymentModal(true);
+      }
+    }
+  };
+
+  const handlePaymentSuccess = () => {
+    setShowPaymentModal(false);
+    // Optionally retry the interpretation
+    if (currentDream) {
+      interpretDream(currentDream);
+    }
   };
 
   const handleSaveDream = () => {
@@ -179,11 +202,17 @@ const Index = () => {
       
       <div className="pt-4 relative z-10">
         {currentScreen === 'home' && (
-          <DreamInput
-            onSubmit={handleDreamSubmit}
-            isAnalyzing={isInterpreting}
-            isDark={isDark}
-          />
+          <>
+            <UsageDisplay 
+              interpretationsLeft={interpretationsLeft} 
+              isDark={isDark} 
+            />
+            <DreamInput
+              onSubmit={handleDreamSubmit}
+              isAnalyzing={isInterpreting}
+              isDark={isDark}
+            />
+          </>
         )}
         
         {currentScreen === 'interpretation' && currentDream && (
@@ -222,6 +251,13 @@ const Index = () => {
       <Navigation
         activeScreen={currentScreen}
         onNavigate={handleNavigate}
+        isDark={isDark}
+      />
+
+      <PaymentModal
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        onPaymentSuccess={handlePaymentSuccess}
         isDark={isDark}
       />
     </div>
