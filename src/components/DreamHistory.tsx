@@ -4,7 +4,8 @@ import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Book, User } from 'lucide-react';
+import { Calendar, Book, User, Trash } from 'lucide-react';
+import { useDreams } from '@/hooks/useDreams';
 
 interface Dream {
   id: string;
@@ -26,6 +27,7 @@ interface DreamHistoryProps {
 
 const DreamHistory = ({ dreams, onViewDream, onNewDream, isDark = true }: DreamHistoryProps) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const { deleteDream } = useDreams();
 
   // Only show dreams that have been saved (have interpretations)
   const savedDreams = dreams.filter(dream => dream.interpretations);
@@ -33,6 +35,13 @@ const DreamHistory = ({ dreams, onViewDream, onNewDream, isDark = true }: DreamH
   const filteredDreams = savedDreams.filter(dream =>
     dream.dreamText.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleDeleteDream = (e: React.MouseEvent, dreamId: string) => {
+    e.stopPropagation();
+    if (window.confirm('Are you sure you want to delete this dream? This action cannot be undone.')) {
+      deleteDream(dreamId);
+    }
+  };
 
   return (
     <div className="max-w-md mx-auto p-4 space-y-4">
@@ -66,8 +75,8 @@ const DreamHistory = ({ dreams, onViewDream, onNewDream, isDark = true }: DreamH
               onClick={onNewDream} 
               className={`${
                 isDark 
-                  ? 'bg-slate-800 hover:bg-slate-700 text-white' 
-                  : 'bg-purple-600 hover:bg-purple-700 text-white'
+                  ? 'bg-slate-800 text-white' 
+                  : 'bg-purple-600 text-white'
               }`}
             >
               Start Dream Entry
@@ -79,8 +88,8 @@ const DreamHistory = ({ dreams, onViewDream, onNewDream, isDark = true }: DreamH
           {filteredDreams.map((dream) => (
             <Card 
               key={dream.id} 
-              className={`cursor-pointer hover:shadow-md transition-shadow ${
-                isDark ? 'glass-card hover:bg-slate-800/30' : 'bg-white border-slate-200 hover:bg-slate-50'
+              className={`cursor-pointer transition-shadow ${
+                isDark ? 'glass-card' : 'bg-white border-slate-200'
               }`}
             >
               <CardContent className="p-4" onClick={() => onViewDream(dream)}>
@@ -90,6 +99,18 @@ const DreamHistory = ({ dreams, onViewDream, onNewDream, isDark = true }: DreamH
                       {dream.dreamText}
                     </p>
                   </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={(e) => handleDeleteDream(e, dream.id)}
+                    className={`ml-2 p-2 ${
+                      isDark 
+                        ? 'text-slate-400 hover:text-red-400' 
+                        : 'text-slate-500 hover:text-red-500'
+                    }`}
+                  >
+                    <Trash className="h-4 w-4" />
+                  </Button>
                 </div>
                 
                 <div className="flex justify-between items-center mt-3">
@@ -125,8 +146,8 @@ const DreamHistory = ({ dreams, onViewDream, onNewDream, isDark = true }: DreamH
         onClick={onNewDream} 
         className={`w-full ${
           isDark 
-            ? 'bg-slate-800 hover:bg-slate-700 text-white' 
-            : 'bg-purple-600 hover:bg-purple-700 text-white'
+            ? 'bg-slate-800 text-white' 
+            : 'bg-purple-600 text-white'
         }`}
       >
         Analyze New Dream

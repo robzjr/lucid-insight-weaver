@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserUsage } from '@/hooks/useUserUsage';
+import { useUserProfile } from '@/hooks/useUserProfile';
 import { toast } from 'sonner';
 
 export interface Dream {
@@ -20,6 +21,7 @@ export interface Dream {
 export const useDreams = () => {
   const { user } = useAuth();
   const { canInterpret, incrementUsage } = useUserUsage();
+  const { profile } = useUserProfile();
   const queryClient = useQueryClient();
 
   const { data: dreams = [], isLoading } = useQuery({
@@ -109,6 +111,37 @@ export const useDreams = () => {
     },
   });
 
+  const deleteDreamMutation = useMutation({
+    mutationFn: async (dreamId: string) => {
+      if (!user) throw new Error('User not authenticated');
+
+      // First delete interpretations
+      const { error: interpretationsError } = await supabase
+        .from('interpretations')
+        .delete()
+        .eq('dream_id', dreamId);
+
+      if (interpretationsError) throw interpretationsError;
+
+      // Then delete the dream
+      const { error: dreamError } = await supabase
+        .from('dreams')
+        .delete()
+        .eq('id', dreamId)
+        .eq('user_id', user.id);
+
+      if (dreamError) throw dreamError;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['dreams'] });
+      toast.success('Dream deleted successfully');
+    },
+    onError: (error) => {
+      console.error('Error deleting dream:', error);
+      toast.error('Failed to delete dream');
+    },
+  });
+
   const interpretDreamMutation = useMutation({
     mutationFn: async (dreamText: string) => {
       // Check if user can interpret before proceeding
@@ -118,8 +151,35 @@ export const useDreams = () => {
 
       console.log('Starting dream interpretation...');
       
+      // Store the dream text in database immediately when interpretation starts
+      const { data: dreamData, error: dreamError } = await supabase
+        .from('dreams')
+        .insert({
+          user_id: user!.id,
+          dream_text: dreamText,
+        })
+        .select()
+        .single();
+
+      if (dreamError) {
+        console.error('Error storing dream:', dreamError);
+        throw new Error('Failed to store dream');
+      }
+
+      // Prepare user context for personalized interpretation
+      const userContext = {
+        age: profile?.age || null,
+        gender: profile?.gender || null,
+        relationshipStatus: profile?.relationship_status || null,
+        preferredStyle: profile?.preferred_style || null,
+        displayName: profile?.display_name || null
+      };
+
       const { data, error } = await supabase.functions.invoke('interpret-dream', {
-        body: { dreamText }
+        body: { 
+          dreamText,
+          userContext 
+        }
       });
 
       console.log('Supabase function response:', { data, error });
@@ -134,8 +194,27 @@ export const useDreams = () => {
         throw new Error('Invalid response from dream interpretation service');
       }
 
+      // Save interpretations to the dream we just created
+      const interpretationInserts = Object.entries(data.interpretations).map(([type, content]) => ({
+        dream_id: dreamData.id,
+        type,
+        content: content as string,
+      }));
+
+      const { error: interpretationsError } = await supabase
+        .from('interpretations')
+        .insert(interpretationInserts);
+
+      if (interpretationsError) {
+        console.error('Error saving interpretations:', interpretationsError);
+        throw new Error('Failed to save interpretations');
+      }
+
       // Increment usage after successful interpretation
       incrementUsage();
+
+      // Invalidate dreams query to refresh the list
+      queryClient.invalidateQueries({ queryKey: ['dreams'] });
 
       return data.interpretations;
     },
@@ -159,9 +238,11 @@ export const useDreams = () => {
     dreams,
     isLoading,
     saveDream: saveDreamMutation.mutate,
+    deleteDream: deleteDreamMutation.mutate,
     interpretDream: interpretDreamMutation.mutate,
     isInterpreting: interpretDreamMutation.isPending,
     isSaving: saveDreamMutation.isPending,
+    isDeleting: deleteDreamMutation.isPending,
     interpretationResult: interpretDreamMutation.data,
     interpretationError: interpretDreamMutation.error,
   };

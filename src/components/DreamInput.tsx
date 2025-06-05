@@ -53,7 +53,7 @@ const DreamInput = ({ onSubmit, isAnalyzing, isDark = true }: DreamInputProps) =
                 value={dreamText}
                 onChange={(e) => setDreamText(e.target.value)}
                 placeholder="Could you describe your dream in as much detail as you remember? Even the smallest details matter..."
-                className={`mt-2 min-h-36 resize-none transition-all duration-300 hover:neon-glow focus:neon-glow ${
+                className={`mt-2 min-h-36 resize-none transition-all duration-300 ${
                   isDark 
                     ? 'bg-slate-900/50 border-slate-700 text-slate-200 placeholder:text-slate-500 focus:border-purple-500 focus:ring-purple-500/20' 
                     : 'bg-white/50 border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-purple-500 focus:ring-purple-500/20'
@@ -64,8 +64,8 @@ const DreamInput = ({ onSubmit, isAnalyzing, isDark = true }: DreamInputProps) =
             
             <Button
               type="submit"
-              className={`w-full bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white font-semibold py-3 rounded-xl transition-all duration-300 transform hover:scale-105 ${
-                isAnalyzing ? 'pulse-glow' : 'hover:neon-glow'
+              className={`w-full bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-semibold py-3 rounded-xl transition-all duration-300 ${
+                isAnalyzing ? 'pulse-glow' : ''
               }`}
               disabled={!dreamText.trim() || isAnalyzing}
             >
