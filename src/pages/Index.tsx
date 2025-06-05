@@ -9,16 +9,19 @@ import Settings from '@/components/Settings';
 import Navigation from '@/components/Navigation';
 import UsageDisplay from '@/components/UsageDisplay';
 import PaymentModal from '@/components/PaymentModal';
+import OnboardingFlow, { OnboardingData } from '@/components/OnboardingFlow';
 import { useAuth } from '@/hooks/useAuth';
 import { useDreams } from '@/hooks/useDreams';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 import { useUserUsage } from '@/hooks/useUserUsage';
+import { useUserProfile } from '@/hooks/useUserProfile';
 
 const Index = () => {
   const { user, loading, signOut } = useAuth();
   const { dreams, interpretDream, saveDream, isInterpreting, interpretationResult, interpretationError } = useDreams();
   const { preferences, updatePreferences } = useUserPreferences();
   const { usage, canInterpret, interpretationsLeft } = useUserUsage();
+  const { profile, updateProfile, needsOnboarding } = useUserProfile();
   
   const [currentScreen, setCurrentScreen] = useState<'home' | 'interpretation' | 'history' | 'settings'>('home');
   const [currentDream, setCurrentDream] = useState<string>('');
@@ -61,6 +64,16 @@ const Index = () => {
     updatePreferences({ theme: newTheme ? 'dark' : 'light' });
   };
 
+  const handleOnboardingComplete = (data: OnboardingData) => {
+    updateProfile({
+      displayName: data.displayName,
+      age: parseInt(data.age),
+      relationshipStatus: data.relationshipStatus,
+      gender: data.gender,
+      preferredStyle: data.preferredStyle
+    });
+  };
+
   const handleDreamSubmit = async (dreamText: string) => {
     if (!canInterpret) {
       setShowPaymentModal(true);
@@ -79,7 +92,6 @@ const Index = () => {
 
   const handlePaymentSuccess = () => {
     setShowPaymentModal(false);
-    // Optionally retry the interpretation
     if (currentDream) {
       interpretDream(currentDream);
     }
@@ -143,9 +155,22 @@ const Index = () => {
     return <AuthPage isDark={isDark} onThemeToggle={handleThemeToggle} />;
   }
 
+  // Show onboarding flow for new users
+  if (needsOnboarding) {
+    return (
+      <OnboardingFlow
+        userName={user.user_metadata?.name || user.email?.split('@')[0] || 'Friend'}
+        onComplete={handleOnboardingComplete}
+        isDark={isDark}
+      />
+    );
+  }
+
   const getScreenTitle = () => {
+    const displayName = profile?.display_name || profile?.name || user.user_metadata?.name || user.email?.split('@')[0] || 'Dreamer';
+    
     switch (currentScreen) {
-      case 'home': return 'Good to see you, Dreamer';
+      case 'home': return `Good to see you, ${displayName}`;
       case 'interpretation': return 'The Dream Speaks...';
       case 'history': return 'My Dream Archive';
       case 'settings': return 'Profile & Settings';

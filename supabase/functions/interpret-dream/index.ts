@@ -83,14 +83,14 @@ serve(async (req) => {
 async function generateInterpretation(dreamText: string, perspective: string, apiKey: string, isArabic: boolean): Promise<string> {
   const prompts = {
     islamic: isArabic 
-      ? `كعالم إسلامي، قدم تفسيراً مدروساً لهذا الحلم وفقاً للتقاليد والتعاليم الإسلامية. ركز على الإرشاد الروحي والمراجع للمبادئ الإسلامية: "${dreamText}"`
-      : `As an Islamic scholar, provide a thoughtful interpretation of this dream according to Islamic tradition and teachings. Focus on spiritual guidance and references to Islamic principles: "${dreamText}"`,
+      ? `كعالم إسلامي، قدم تفسيراً مدروساً لهذا الحلم وفقاً للتقاليد والتعاليم الإسلامية. ركز على الإرشاد الروحي والمراجع للمبادئ الإسلامية. اكتب الرد بدون أي رموز تزيينية مثل النجوم أو الشرطات. استخدم نصاً واضحاً وبسيطاً: "${dreamText}"`
+      : `As an Islamic scholar, provide a thoughtful interpretation of this dream according to Islamic tradition and teachings. Focus on spiritual guidance and references to Islamic principles. Write your response without any decorative characters like asterisks or dashes. Use clear, simple text: "${dreamText}"`,
     spiritual: isArabic
-      ? `كمرشد روحي، قدم تفسيراً لهذا الحلم من منظور روحي شامل، مع التركيز على النمو الشخصي والرمزية والحكمة الداخلية: "${dreamText}"`
-      : `As a spiritual guide, provide an interpretation of this dream from a universal spiritual perspective, focusing on personal growth, symbolism, and inner wisdom: "${dreamText}"`,
+      ? `كمرشد روحي، قدم تفسيراً لهذا الحلم من منظور روحي شامل، مع التركيز على النمو الشخصي والرمزية والحكمة الداخلية. اكتب الرد بدون أي رموز تزيينية مثل النجوم أو الشرطات. استخدم نصاً واضحاً وبسيطاً: "${dreamText}"`
+      : `As a spiritual guide, provide an interpretation of this dream from a universal spiritual perspective, focusing on personal growth, symbolism, and inner wisdom. Write your response without any decorative characters like asterisks or dashes. Use clear, simple text: "${dreamText}"`,
     psychological: isArabic
-      ? `كطبيب نفسي، قدم تفسيراً لهذا الحلم من منظور نفسي، مع التركيز على العمليات اللاوعية والأنماط العاطفية والحالات الذهنية: "${dreamText}"`
-      : `As a psychologist, provide an interpretation of this dream from a psychological perspective, focusing on subconscious processes, emotional patterns, and mental states: "${dreamText}"`
+      ? `كطبيب نفسي، قدم تفسيراً لهذا الحلم من منظور نفسي، مع التركيز على العمليات اللاوعية والأنماط العاطفية والحالات الذهنية. اكتب الرد بدون أي رموز تزيينية مثل النجوم أو الشرطات. استخدم نصاً واضحاً وبسيطاً: "${dreamText}"`
+      : `As a psychologist, provide an interpretation of this dream from a psychological perspective, focusing on subconscious processes, emotional patterns, and mental states. Write your response without any decorative characters like asterisks or dashes. Use clear, simple text: "${dreamText}"`
   }
 
   console.log(`Generating ${perspective} interpretation (Arabic: ${isArabic})...`)
@@ -128,7 +128,19 @@ async function generateInterpretation(dreamText: string, perspective: string, ap
     console.log(`Generated ${perspective} interpretation successfully`)
     
     if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
-      return data.candidates[0].content.parts[0].text
+      let interpretation = data.candidates[0].content.parts[0].text
+      
+      // Clean up decorative characters
+      interpretation = interpretation
+        .replace(/\*\*/g, '') // Remove bold markdown
+        .replace(/\*/g, '') // Remove asterisks
+        .replace(/--+/g, '-') // Replace multiple dashes with single dash
+        .replace(/==+/g, '') // Remove equals signs
+        .replace(/##/g, '') // Remove markdown headers
+        .replace(/\[.*?\]/g, '') // Remove square brackets
+        .trim()
+      
+      return interpretation
     }
     
     console.error(`Invalid response structure for ${perspective}:`, data)
