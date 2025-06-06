@@ -1,13 +1,13 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { User, Settings as SettingsIcon, LogOut, Crown, Plus, Edit, Share2, Users, HelpCircle, Shield, FileText } from 'lucide-react';
+import { User, Settings as SettingsIcon, LogOut, Crown, Edit, Share2, Users, HelpCircle, Shield, CreditCard } from 'lucide-react';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { toast } from 'sonner';
 
@@ -261,39 +261,6 @@ const Settings = ({
                 </div>
               </div>
             )}
-            
-            <div className="flex items-center justify-between border-t pt-4">
-              <div>
-                <p className={`font-medium ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-                  Current Plan
-                </p>
-                <div className="flex items-center space-x-2 mt-1">
-                  <Badge 
-                    variant="secondary" 
-                    className="bg-blue-500/20 text-blue-400 border-blue-500/30"
-                  >
-                    Free Plan
-                  </Badge>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={onNavigateToSubscription}
-                    className={`h-6 w-6 p-0 ${
-                      isDark ? 'text-slate-400 hover:text-white' : 'hover:bg-slate-100'
-                    }`}
-                  >
-                    <Plus className="h-3 w-3" />
-                  </Button>
-                </div>
-              </div>
-              <Button
-                onClick={onUpgrade}
-                className="bg-gradient-to-r from-purple-600 to-cyan-600 text-white"
-              >
-                <Crown className="w-4 h-4 mr-2" />
-                Upgrade to Premium
-              </Button>
-            </div>
           </CardContent>
         </Card>
 
@@ -316,8 +283,8 @@ const Settings = ({
                 isDark ? 'text-slate-300 hover:text-white hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-100'
               }`}
             >
-              <Crown className="w-4 h-4 mr-3" />
-              View Subscription Plans
+              <CreditCard className="w-4 h-4 mr-3" />
+              View Plans
             </Button>
             
             <Button

@@ -8,6 +8,7 @@ import DreamHistory from '@/components/DreamHistory';
 import Settings from '@/components/Settings';
 import SubscriptionPlan from '@/components/SubscriptionPlan';
 import HelpSupport from '@/components/HelpSupport';
+import MyPlan from '@/components/MyPlan';
 import Navigation from '@/components/Navigation';
 import UsageDisplay from '@/components/UsageDisplay';
 import PaymentModal from '@/components/PaymentModal';
@@ -20,7 +21,7 @@ import { useUserPreferences } from '@/hooks/useUserPreferences';
 import { useUserUsage } from '@/hooks/useUserUsage';
 import { useUserProfile } from '@/hooks/useUserProfile';
 
-type ScreenType = 'home' | 'interpretation' | 'history' | 'settings' | 'subscription' | 'help';
+type ScreenType = 'home' | 'interpretation' | 'history' | 'settings' | 'subscription' | 'help' | 'myplan';
 
 const Index = () => {
   const { user, loading, signOut } = useAuth();
@@ -184,6 +185,7 @@ const Index = () => {
       case 'settings': return 'Profile & Settings';
       case 'subscription': return 'Subscription Plans';
       case 'help': return 'Help & Support';
+      case 'myplan': return 'My Plan';
       default: return 'Ramel';
     }
   };
@@ -310,6 +312,13 @@ const Index = () => {
 
         {currentScreen === 'help' && (
           <HelpSupport
+            isDark={isDark}
+          />
+        )}
+
+        {currentScreen === 'myplan' && (
+          <MyPlan
+            onUpgrade={handleUpgrade}
             isDark={isDark}
           />
         )}
