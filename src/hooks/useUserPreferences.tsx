@@ -8,6 +8,7 @@ export interface UserPreferences {
   showSpiritual: boolean;
   showPsychological: boolean;
   theme: string;
+  language: string;
 }
 
 export const useUserPreferences = () => {
@@ -34,7 +35,8 @@ export const useUserPreferences = () => {
           show_islamic: true,
           show_spiritual: true,
           show_psychological: true,
-          theme: 'dark'
+          theme: 'dark',
+          language: 'en'
         };
 
         const { data: newPrefs, error: insertError } = await supabase
@@ -48,7 +50,8 @@ export const useUserPreferences = () => {
           showIslamic: newPrefs.show_islamic,
           showSpiritual: newPrefs.show_spiritual,
           showPsychological: newPrefs.show_psychological,
-          theme: newPrefs.theme
+          theme: newPrefs.theme,
+          language: newPrefs.language || 'en'
         };
       }
 
@@ -56,7 +59,8 @@ export const useUserPreferences = () => {
         showIslamic: data.show_islamic,
         showSpiritual: data.show_spiritual,
         showPsychological: data.show_psychological,
-        theme: data.theme
+        theme: data.theme,
+        language: data.language || 'en'
       };
     },
     enabled: !!user,
@@ -71,6 +75,7 @@ export const useUserPreferences = () => {
         show_spiritual: newPreferences.showSpiritual,
         show_psychological: newPreferences.showPsychological,
         theme: newPreferences.theme,
+        language: newPreferences.language,
       };
 
       // Remove undefined values
@@ -96,7 +101,8 @@ export const useUserPreferences = () => {
       showIslamic: true,
       showSpiritual: true,
       showPsychological: true,
-      theme: 'dark'
+      theme: 'dark',
+      language: 'en'
     },
     isLoading,
     updatePreferences: updatePreferencesMutation.mutate,
