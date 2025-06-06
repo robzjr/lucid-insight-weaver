@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -67,6 +66,28 @@ export const useDreams = () => {
       return dreamsWithInterpretations;
     },
     enabled: !!user,
+  });
+
+  const updateDreamMutation = useMutation({
+    mutationFn: async ({ dreamId, newText }: { dreamId: string; newText: string }) => {
+      if (!user) throw new Error('User not authenticated');
+
+      const { error } = await supabase
+        .from('dreams')
+        .update({ dream_text: newText, updated_at: new Date().toISOString() })
+        .eq('id', dreamId)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['dreams'] });
+      toast.success('Dream updated successfully!');
+    },
+    onError: (error) => {
+      console.error('Error updating dream:', error);
+      toast.error('Failed to update dream');
+    },
   });
 
   const saveDreamMutation = useMutation({
@@ -238,10 +259,12 @@ export const useDreams = () => {
     dreams,
     isLoading,
     saveDream: saveDreamMutation.mutate,
+    updateDream: (dreamId: string, newText: string) => updateDreamMutation.mutate({ dreamId, newText }),
     deleteDream: deleteDreamMutation.mutate,
     interpretDream: interpretDreamMutation.mutate,
     isInterpreting: interpretDreamMutation.isPending,
     isSaving: saveDreamMutation.isPending,
+    isUpdating: updateDreamMutation.isPending,
     isDeleting: deleteDreamMutation.isPending,
     interpretationResult: interpretDreamMutation.data,
     interpretationError: interpretDreamMutation.error,

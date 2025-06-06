@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Book, User, Calendar } from 'lucide-react';
 import Header from '@/components/Header';
@@ -6,6 +7,8 @@ import DreamInput from '@/components/DreamInput';
 import InterpretationDisplay from '@/components/InterpretationDisplay';
 import DreamHistory from '@/components/DreamHistory';
 import Settings from '@/components/Settings';
+import SubscriptionPlan from '@/components/SubscriptionPlan';
+import HelpSupport from '@/components/HelpSupport';
 import Navigation from '@/components/Navigation';
 import UsageDisplay from '@/components/UsageDisplay';
 import PaymentModal from '@/components/PaymentModal';
@@ -16,6 +19,8 @@ import { useUserPreferences } from '@/hooks/useUserPreferences';
 import { useUserUsage } from '@/hooks/useUserUsage';
 import { useUserProfile } from '@/hooks/useUserProfile';
 
+type ScreenType = 'home' | 'interpretation' | 'history' | 'settings' | 'subscription' | 'help';
+
 const Index = () => {
   const { user, loading, signOut } = useAuth();
   const { dreams, interpretDream, saveDream, isInterpreting, interpretationResult, interpretationError } = useDreams();
@@ -23,7 +28,7 @@ const Index = () => {
   const { usage, canInterpret, interpretationsLeft } = useUserUsage();
   const { profile, updateProfile, needsOnboarding } = useUserProfile();
   
-  const [currentScreen, setCurrentScreen] = useState<'home' | 'interpretation' | 'history' | 'settings'>('home');
+  const [currentScreen, setCurrentScreen] = useState<ScreenType>('home');
   const [currentDream, setCurrentDream] = useState<string>('');
   const [viewingDream, setViewingDream] = useState<any>(null);
   const [isDark, setIsDark] = useState(true);
@@ -127,7 +132,7 @@ const Index = () => {
   };
 
   const handleNavigate = (screen: string) => {
-    setCurrentScreen(screen as 'home' | 'interpretation' | 'history' | 'settings');
+    setCurrentScreen(screen as ScreenType);
     if (screen === 'home') {
       setCurrentDream('');
       setViewingDream(null);
@@ -174,6 +179,8 @@ const Index = () => {
       case 'interpretation': return 'The Dream Speaks...';
       case 'history': return 'My Dream Archive';
       case 'settings': return 'Profile & Settings';
+      case 'subscription': return 'Subscription Plans';
+      case 'help': return 'Help & Support';
       default: return 'Ramel';
     }
   };
@@ -274,6 +281,21 @@ const Index = () => {
             isDark={isDark}
             onThemeToggle={handleThemeToggle}
             onUpgrade={handleUpgrade}
+            onNavigateToSubscription={() => setCurrentScreen('subscription')}
+            onNavigateToHelp={() => setCurrentScreen('help')}
+          />
+        )}
+
+        {currentScreen === 'subscription' && (
+          <SubscriptionPlan
+            isDark={isDark}
+            onUpgrade={handleUpgrade}
+          />
+        )}
+
+        {currentScreen === 'help' && (
+          <HelpSupport
+            isDark={isDark}
           />
         )}
       </div>

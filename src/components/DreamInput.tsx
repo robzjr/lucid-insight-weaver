@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { Progress } from '@/components/ui/progress';
 
 interface DreamInputProps {
   onSubmit: (dream: string) => void;
@@ -13,6 +14,22 @@ interface DreamInputProps {
 
 const DreamInput = ({ onSubmit, isAnalyzing, isDark = true }: DreamInputProps) => {
   const [dreamText, setDreamText] = useState('');
+  const [progress, setProgress] = useState(0);
+
+  React.useEffect(() => {
+    if (isAnalyzing) {
+      const interval = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 90) return prev;
+          return prev + Math.random() * 15;
+        });
+      }, 800);
+
+      return () => clearInterval(interval);
+    } else {
+      setProgress(0);
+    }
+  }, [isAnalyzing]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,6 +37,8 @@ const DreamInput = ({ onSubmit, isAnalyzing, isDark = true }: DreamInputProps) =
       onSubmit(dreamText.trim());
     }
   };
+
+  const estimatedWaitTime = "30-60 seconds";
 
   return (
     <div className="max-w-md mx-auto p-4 slide-up">
@@ -37,22 +56,24 @@ const DreamInput = ({ onSubmit, isAnalyzing, isDark = true }: DreamInputProps) =
             </div>
           </div>
           <CardTitle className="hologram-text text-xl">
-            Speak, Dreamer...
+            Share Your Dream
           </CardTitle>
           <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-            Have a dream you can't shake off? Tell Ramel all about it.
+            Describe your dream in detail for the most accurate interpretation
           </p>
         </CardHeader>
         
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="dream" className={`font-medium ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>Your Dream</Label>
+              <Label htmlFor="dream" className={`font-medium ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                Dream Description
+              </Label>
               <Textarea
                 id="dream"
                 value={dreamText}
                 onChange={(e) => setDreamText(e.target.value)}
-                placeholder="Could you describe your dream in as much detail as you remember? Even the smallest details matter..."
+                placeholder="I dreamed that I was walking through a forest when I saw a bright light ahead. I felt curious but also a little scared..."
                 className={`mt-2 min-h-36 resize-none transition-all duration-300 ${
                   isDark 
                     ? 'bg-slate-900/50 border-slate-700 text-slate-200 placeholder:text-slate-500 focus:border-purple-500 focus:ring-purple-500/20' 
@@ -61,6 +82,23 @@ const DreamInput = ({ onSubmit, isAnalyzing, isDark = true }: DreamInputProps) =
                 disabled={isAnalyzing}
               />
             </div>
+
+            {isAnalyzing && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                    Analyzing your dream...
+                  </span>
+                  <span className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                    {Math.round(progress)}%
+                  </span>
+                </div>
+                <Progress value={progress} className="h-2" />
+                <div className={`text-center text-xs ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+                  Estimated wait time: {estimatedWaitTime}
+                </div>
+              </div>
+            )}
             
             <Button
               type="submit"
@@ -90,7 +128,7 @@ const DreamInput = ({ onSubmit, isAnalyzing, isDark = true }: DreamInputProps) =
           }`}>
             <div className="flex items-center justify-center space-x-1">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span>Your dreams, your space • Everything stays between you and Ramel</span>
+              <span>Your dreams are private and secure</span>
             </div>
           </div>
         </CardContent>
