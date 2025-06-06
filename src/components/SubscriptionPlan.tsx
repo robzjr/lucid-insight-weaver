@@ -60,12 +60,6 @@ const SubscriptionPlan = ({ isDark = true, onUpgrade }: SubscriptionPlanProps) =
     "Custom interpretation requests"
   ];
 
-  const getNextResetDate = () => {
-    const now = new Date();
-    const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-    return nextMonth.toLocaleDateString();
-  };
-
   return (
     <div className="container mx-auto p-4 max-w-6xl space-y-6">
       <div className="text-center mb-8">
@@ -99,19 +93,14 @@ const SubscriptionPlan = ({ isDark = true, onUpgrade }: SubscriptionPlanProps) =
       </Card>
 
       <div className="grid md:grid-cols-3 gap-6">
-        {/* Basic Plan */}
+        {/* Basic Pack */}
         <Card className={`relative ${
           isDark ? 'glass-card border-slate-700' : 'bg-white border-slate-200'
         }`}>
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className={`text-xl ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                Basic Plan
-              </CardTitle>
-              <Badge variant="outline" className="border-green-500 text-green-500">
-                Current
-              </Badge>
-            </div>
+            <CardTitle className={`text-xl ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              Basic Pack
+            </CardTitle>
             <div className="flex items-baseline space-x-1">
               <span className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 Free
@@ -119,27 +108,13 @@ const SubscriptionPlan = ({ isDark = true, onUpgrade }: SubscriptionPlanProps) =
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className={`p-3 rounded-lg ${
-              isDark ? 'bg-slate-800/50' : 'bg-slate-50'
+            <div className={`p-3 rounded-lg border border-green-500/30 ${
+              isDark ? 'bg-green-950/20' : 'bg-green-50'
             }`}>
-              <div className="flex items-center justify-between mb-2">
-                <span className={`font-medium ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-                  Interpretations Used
-                </span>
-                <span className={`${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                  {usage ? 5 - interpretationsLeft : 0}/5
-                </span>
-              </div>
-              <div className={`w-full bg-slate-600 rounded-full h-2`}>
-                <div 
-                  className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${usage ? ((5 - interpretationsLeft) / 5) * 100 : 0}%` }}
-                ></div>
-              </div>
-              <div className="flex items-center mt-2 text-sm">
-                <Calendar className="h-4 w-4 mr-1" />
-                <span className={`${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                  Resets on {getNextResetDate()}
+              <div className="flex items-center justify-center space-x-2">
+                <Zap className="h-5 w-5 text-green-500" />
+                <span className={`font-medium ${isDark ? 'text-green-300' : 'text-green-700'}`}>
+                  5 Interpretations/Month
                 </span>
               </div>
             </div>
@@ -167,7 +142,7 @@ const SubscriptionPlan = ({ isDark = true, onUpgrade }: SubscriptionPlanProps) =
           </CardContent>
         </Card>
 
-        {/* Premium Plan */}
+        {/* Premium Pack */}
         <Card className={`relative border-2 border-purple-500 ${
           isDark ? 'glass-card' : 'bg-white'
         }`}>
@@ -227,7 +202,7 @@ const SubscriptionPlan = ({ isDark = true, onUpgrade }: SubscriptionPlanProps) =
           </CardContent>
         </Card>
 
-        {/* Ultimate Plan */}
+        {/* Ultimate Pack */}
         <Card className={`relative border-2 border-yellow-500 ${
           isDark ? 'glass-card' : 'bg-white'
         }`}>
