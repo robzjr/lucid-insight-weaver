@@ -73,7 +73,9 @@ const Settings = ({
   };
 
   const handleReferFriend = () => {
-    const referralText = `Check out Ramel - the AI-powered dream interpreter! Use my referral to get 5 free dream interpretations. Download it here: ${window.location.origin}`;
+    const baseUrl = window.location.origin;
+    const referralCode = userEmail.split('@')[0]; // Simple referral code
+    const referralText = `Check out Ramel - the AI-powered dream interpreter! Use my referral to get 5 free dream interpretations. Sign up here: ${baseUrl}?ref=${referralCode}`;
     
     if (navigator.share) {
       navigator.share({

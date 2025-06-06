@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Book, User, Calendar } from 'lucide-react';
 import Header from '@/components/Header';
@@ -13,6 +12,8 @@ import Navigation from '@/components/Navigation';
 import UsageDisplay from '@/components/UsageDisplay';
 import PaymentModal from '@/components/PaymentModal';
 import OnboardingFlow, { OnboardingData } from '@/components/OnboardingFlow';
+import CurrentPlanCard from '@/components/CurrentPlanCard';
+import ProfileCompletionBanner from '@/components/ProfileCompletionBanner';
 import { useAuth } from '@/hooks/useAuth';
 import { useDreams } from '@/hooks/useDreams';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
@@ -144,6 +145,8 @@ const Index = () => {
     setShowPaymentModal(true);
   };
 
+  const isProfileIncomplete = profile && (!profile.display_name || !profile.age || !profile.relationship_status || !profile.gender);
+
   // Show loading spinner while checking auth state
   if (loading) {
     return (
@@ -239,6 +242,18 @@ const Index = () => {
       <div className="pt-4 relative z-10">
         {currentScreen === 'home' && (
           <>
+            {isProfileIncomplete && (
+              <ProfileCompletionBanner 
+                onComplete={() => setCurrentScreen('settings')}
+                isDark={isDark}
+              />
+            )}
+            <CurrentPlanCard 
+              interpretationsLeft={interpretationsLeft}
+              onUpgrade={handleUpgrade}
+              onViewPlans={() => setCurrentScreen('subscription')}
+              isDark={isDark}
+            />
             <UsageDisplay 
               interpretationsLeft={interpretationsLeft} 
               isDark={isDark} 
