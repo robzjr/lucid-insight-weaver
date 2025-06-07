@@ -9,7 +9,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { User, Settings as SettingsIcon, LogOut, Crown, Edit, Share2, Users, HelpCircle, Shield, CreditCard, Globe } from 'lucide-react';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { toast } from 'sonner';
-
 interface SettingsProps {
   userPreferences: any;
   onUpdatePreferences: (preferences: any) => void;
@@ -21,7 +20,6 @@ interface SettingsProps {
   onNavigateToSubscription: () => void;
   onNavigateToHelp: () => void;
 }
-
 const Settings = ({
   userPreferences,
   onUpdatePreferences,
@@ -93,8 +91,7 @@ const Settings = ({
       toast.success('Referral link copied to clipboard!');
     }
   };
-  return (
-    <TooltipProvider>
+  return <TooltipProvider>
       <div className="container mx-auto p-4 max-w-2xl space-y-6">
         {/* Profile Section */}
         <Card className={`${isDark ? 'glass-card border-slate-700' : 'bg-white/90 border-slate-200'}`}>
@@ -256,29 +253,14 @@ const Settings = ({
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Button
-              variant="ghost"
-              onClick={onNavigateToSubscription}
-              className={`w-full justify-start ${isDark ? 'text-slate-300 hover:text-white hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-100'}`}
-            >
-              <Crown className="w-4 h-4 mr-3" />
-              View Plans
-            </Button>
             
-            <Button
-              variant="ghost"
-              onClick={onNavigateToHelp}
-              className={`w-full justify-start ${isDark ? 'text-slate-300 hover:text-white hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-100'}`}
-            >
+            
+            <Button variant="ghost" onClick={onNavigateToHelp} className={`w-full justify-start ${isDark ? 'text-slate-300 hover:text-white hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-100'}`}>
               <HelpCircle className="w-4 h-4 mr-3" />
               Help & Support
             </Button>
             
-            <Button
-              variant="ghost"
-              onClick={() => window.open('/privacy-policy', '_blank')}
-              className={`w-full justify-start ${isDark ? 'text-slate-300 hover:text-white hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-100'}`}
-            >
+            <Button variant="ghost" onClick={() => window.open('/privacy-policy', '_blank')} className={`w-full justify-start ${isDark ? 'text-slate-300 hover:text-white hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-100'}`}>
               <Shield className="w-4 h-4 mr-3" />
               Privacy Policy
             </Button>
@@ -401,10 +383,7 @@ const Settings = ({
                 </p>
               </div>
               <div className="w-32">
-                <Select 
-                  value={userPreferences?.language || 'en'} 
-                  onValueChange={handleLanguageChange}
-                >
+                <Select value={userPreferences?.language || 'en'} onValueChange={handleLanguageChange}>
                   <SelectTrigger className={isDark ? 'bg-slate-900/50 border-slate-700 text-slate-200' : 'bg-white border-slate-300'}>
                     <SelectValue placeholder="Language" />
                   </SelectTrigger>
@@ -428,8 +407,6 @@ const Settings = ({
           </CardContent>
         </Card>
       </div>
-    </TooltipProvider>
-  );
+    </TooltipProvider>;
 };
-
 export default Settings;
