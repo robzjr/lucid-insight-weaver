@@ -51,7 +51,7 @@ export const useUserPreferences = () => {
           showSpiritual: newPrefs.show_spiritual,
           showPsychological: newPrefs.show_psychological,
           theme: newPrefs.theme,
-          language: newPrefs.language || 'en'
+          language: newPrefs.language
         };
       }
 
@@ -60,7 +60,7 @@ export const useUserPreferences = () => {
         showSpiritual: data.show_spiritual,
         showPsychological: data.show_psychological,
         theme: data.theme,
-        language: data.language || 'en'
+        language: data.language
       };
     },
     enabled: !!user,

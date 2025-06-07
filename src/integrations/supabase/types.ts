@@ -148,6 +148,7 @@ export type Database = {
       }
       user_preferences: {
         Row: {
+          language: string
           show_islamic: boolean
           show_psychological: boolean
           show_spiritual: boolean
@@ -156,6 +157,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          language?: string
           show_islamic?: boolean
           show_psychological?: boolean
           show_spiritual?: boolean
@@ -164,6 +166,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          language?: string
           show_islamic?: boolean
           show_psychological?: boolean
           show_spiritual?: boolean
