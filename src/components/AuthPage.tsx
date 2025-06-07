@@ -1,11 +1,10 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { Zap, Brain, Eye, Mail } from 'lucide-react';
+import { Zap, Brain, Eye, EyeOff, Mail } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import PasswordStrengthMeter from '@/components/PasswordStrengthMeter';
@@ -22,6 +21,7 @@ const AuthPage = ({ isDark = true, onThemeToggle }: AuthPageProps) => {
   const [name, setName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -191,19 +191,35 @@ const AuthPage = ({ isDark = true, onThemeToggle }: AuthPageProps) => {
               <Label htmlFor="password" className={isDark ? 'text-slate-300' : 'text-slate-700'}>
                 Password
               </Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className={`mt-1 ${
-                  isDark 
-                    ? 'bg-slate-900/50 border-slate-700 text-slate-200 focus:border-amber-500 focus:ring-amber-500/20' 
-                    : 'bg-white/50 border-slate-300 text-slate-900 focus:border-amber-500 focus:ring-amber-500/20'
-                }`}
-                placeholder="Enter your password"
-              />
+              <div className="relative mt-1">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className={`pr-10 ${
+                    isDark 
+                      ? 'bg-slate-900/50 border-slate-700 text-slate-200 focus:border-amber-500 focus:ring-amber-500/20' 
+                      : 'bg-white/50 border-slate-300 text-slate-900 focus:border-amber-500 focus:ring-amber-500/20'
+                  }`}
+                  placeholder="Enter your password"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  onClick={() => setShowPassword(!showPassword)}
+                  tabIndex={-1}
+                >
+                  {showPassword ? (
+                    <EyeOff className={`h-4 w-4 ${isDark ? 'text-slate-400' : 'text-slate-600'}`} />
+                  ) : (
+                    <Eye className={`h-4 w-4 ${isDark ? 'text-slate-400' : 'text-slate-600'}`} />
+                  )}
+                </Button>
+              </div>
               {!isLogin && <PasswordStrengthMeter password={password} isDark={isDark} />}
             </div>
             
