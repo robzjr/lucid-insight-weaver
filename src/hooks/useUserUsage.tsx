@@ -57,20 +57,32 @@ export const useUserUsage = () => {
     mutationFn: async () => {
       if (!user || !usage) throw new Error('No user or usage data');
 
-      const updates: any = {};
-      
-      if (usage.paid_interpretations_remaining > 0) {
-        updates.paid_interpretations_remaining = usage.paid_interpretations_remaining - 1;
+      // Fix: handle nulls and prevent empty updates
+      const paidLeft = usage.paid_interpretations_remaining ?? 0;
+      const freeUsed = usage.free_interpretations_used ?? 0;
+      let updates: any = {};
+
+      if (paidLeft > 0) {
+        updates.paid_interpretations_remaining = paidLeft - 1;
+        console.log('Decrementing paid_interpretations_remaining:', paidLeft, '->', paidLeft - 1);
+      } else if (freeUsed < 5) {
+        updates.free_interpretations_used = freeUsed + 1;
+        console.log('Incrementing free_interpretations_used:', freeUsed, '->', freeUsed + 1);
       } else {
-        updates.free_interpretations_used = usage.free_interpretations_used + 1;
+        // Should never reach here, caller checks canInterpret. But let's block an empty update anyway.
+        throw new Error('No remaining interpretation credits.');
       }
+      console.log('Updating user_usage with:', updates);
 
       const { error } = await supabase
         .from('user_usage')
         .update(updates)
         .eq('user_id', user.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error in usage update:', error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user-usage'] });
@@ -82,11 +94,11 @@ export const useUserUsage = () => {
   });
 
   const canInterpret = usage ? 
-    usage.free_interpretations_used < 5 || usage.paid_interpretations_remaining > 0 : 
+    (usage.free_interpretations_used ?? 0) < 5 || (usage.paid_interpretations_remaining ?? 0) > 0 : 
     true;
 
   const interpretationsLeft = usage ? 
-    Math.max(0, 5 - usage.free_interpretations_used) + usage.paid_interpretations_remaining :
+    Math.max(0, 5 - (usage.free_interpretations_used ?? 0)) + (usage.paid_interpretations_remaining ?? 0) :
     5;
 
   return {
