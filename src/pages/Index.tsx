@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Book, User, Calendar } from 'lucide-react';
 import Header from '@/components/Header';
@@ -90,11 +89,17 @@ const Index = () => {
     
     setCurrentDream(dreamText);
     try {
+      console.log('Starting dream interpretation process...');
       await interpretDream(dreamText);
-      incrementUsage();
+      console.log('Dream interpretation completed, now incrementing usage...');
+      
+      // Add a small delay to ensure the interpretation completed successfully
+      setTimeout(() => {
+        incrementUsage();
+      }, 100);
     } catch (error: any) {
-      // The hook's `onError` will show a toast for other errors.
       console.error("Dream interpretation failed:", error);
+      // Don't increment usage if interpretation failed
     }
   };
 
