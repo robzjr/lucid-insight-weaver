@@ -73,7 +73,9 @@ export type Database = {
           id: string
           interpretations_granted: number
           payment_date: string | null
+          payment_provider: string | null
           paymob_transaction_id: string | null
+          paypal_order_id: string | null
           status: string
           updated_at: string
           user_id: string
@@ -85,7 +87,9 @@ export type Database = {
           id?: string
           interpretations_granted?: number
           payment_date?: string | null
+          payment_provider?: string | null
           paymob_transaction_id?: string | null
+          paypal_order_id?: string | null
           status?: string
           updated_at?: string
           user_id: string
@@ -97,7 +101,9 @@ export type Database = {
           id?: string
           interpretations_granted?: number
           payment_date?: string | null
+          payment_provider?: string | null
           paymob_transaction_id?: string | null
+          paypal_order_id?: string | null
           status?: string
           updated_at?: string
           user_id?: string
@@ -146,6 +152,54 @@ export type Database = {
         }
         Relationships: []
       }
+      referrals: {
+        Row: {
+          created_at: string | null
+          id: string
+          referred_id: string | null
+          referrer_id: string | null
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          referred_id?: string | null
+          referrer_id?: string | null
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          referred_id?: string | null
+          referrer_id?: string | null
+          status?: string | null
+        }
+        Relationships: []
+      }
+      user_credits: {
+        Row: {
+          created_at: string | null
+          interpretations_remaining: number | null
+          total_referrals: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          interpretations_remaining?: number | null
+          total_referrals?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          interpretations_remaining?: number | null
+          total_referrals?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_preferences: {
         Row: {
           language: string
@@ -178,30 +232,27 @@ export type Database = {
       }
       user_usage: {
         Row: {
-          created_at: string
+          created_at: string | null
           free_interpretations_used: number
-          id: string
-          last_payment_date: string | null
-          paid_interpretations_remaining: number
-          updated_at: string
+          paid_interpretations_remaining: number | null
+          referral_count: number | null
+          updated_at: string | null
           user_id: string
         }
         Insert: {
-          created_at?: string
+          created_at?: string | null
           free_interpretations_used?: number
-          id?: string
-          last_payment_date?: string | null
-          paid_interpretations_remaining?: number
-          updated_at?: string
+          paid_interpretations_remaining?: number | null
+          referral_count?: number | null
+          updated_at?: string | null
           user_id: string
         }
         Update: {
-          created_at?: string
+          created_at?: string | null
           free_interpretations_used?: number
-          id?: string
-          last_payment_date?: string | null
-          paid_interpretations_remaining?: number
-          updated_at?: string
+          paid_interpretations_remaining?: number | null
+          referral_count?: number | null
+          updated_at?: string | null
           user_id?: string
         }
         Relationships: []
@@ -211,7 +262,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      process_referral: {
+        Args: { referral_code: string; new_user_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

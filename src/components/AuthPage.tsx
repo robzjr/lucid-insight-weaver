@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,8 +9,10 @@ import { Zap, Brain, Eye, EyeOff, Mail } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import PasswordStrengthMeter from '@/components/PasswordStrengthMeter';
-import { useRecaptcha } from '@/hooks/useRecaptcha';
-import { verifyRecaptcha } from '@/services/recaptcha';
+
+// Removed reCAPTCHA imports
+// import { useRecaptcha } from '@/hooks/useRecaptcha';
+// import { verifyRecaptcha } from '@/services/recaptcha';
 
 interface AuthPageProps {
   isDark?: boolean;
@@ -25,29 +28,15 @@ const AuthPage = ({ isDark = true, onThemeToggle }: AuthPageProps) => {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const { isLoaded: isRecaptchaLoaded, executeRecaptcha } = useRecaptcha();
+  // Removed useRecaptcha
+  // const { isLoaded: isRecaptchaLoaded, executeRecaptcha } = useRecaptcha();
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      // Execute reCAPTCHA
-      if (!isRecaptchaLoaded) {
-        throw new Error('reCAPTCHA not loaded. Please try again.');
-      }
-
-      const recaptchaToken = await executeRecaptcha(isLogin ? 'login' : 'signup');
-      if (!recaptchaToken) {
-        throw new Error('reCAPTCHA verification failed. Please try again.');
-      }
-
-      // Verify reCAPTCHA token
-      const isRecaptchaValid = await verifyRecaptcha(recaptchaToken);
-      if (!isRecaptchaValid) {
-        throw new Error('reCAPTCHA verification failed. Please try again.');
-      }
-
+      // Removed reCAPTCHA logic
       if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({
           email,
@@ -79,22 +68,7 @@ const AuthPage = ({ isDark = true, onThemeToggle }: AuthPageProps) => {
   const handleGoogleAuth = async () => {
     setIsGoogleLoading(true);
     try {
-      // Execute reCAPTCHA for Google auth
-      if (!isRecaptchaLoaded) {
-        throw new Error('reCAPTCHA not loaded. Please try again.');
-      }
-
-      const recaptchaToken = await executeRecaptcha('google_auth');
-      if (!recaptchaToken) {
-        throw new Error('reCAPTCHA verification failed. Please try again.');
-      }
-
-      // Verify reCAPTCHA token
-      const isRecaptchaValid = await verifyRecaptcha(recaptchaToken);
-      if (!isRecaptchaValid) {
-        throw new Error('reCAPTCHA verification failed. Please try again.');
-      }
-
+      // Removed reCAPTCHA logic for Google auth
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -155,7 +129,7 @@ const AuthPage = ({ isDark = true, onThemeToggle }: AuthPageProps) => {
         <CardContent className="space-y-6">
           <Button
             onClick={handleGoogleAuth}
-            disabled={isGoogleLoading || !isRecaptchaLoaded}
+            disabled={isGoogleLoading}
             className="w-full bg-white text-gray-900 border border-gray-300 hover:bg-gray-50"
           >
             {isGoogleLoading ? (
@@ -261,7 +235,7 @@ const AuthPage = ({ isDark = true, onThemeToggle }: AuthPageProps) => {
             
             <Button 
               type="submit" 
-              disabled={isLoading || !isRecaptchaLoaded}
+              disabled={isLoading}
               className="w-full bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white font-semibold py-3 rounded-xl transition-all duration-300"
             >
               {isLoading ? (
@@ -278,7 +252,8 @@ const AuthPage = ({ isDark = true, onThemeToggle }: AuthPageProps) => {
             </Button>
           </form>
           
-          <div className="text-center">
+          {/* Removed reCAPTCHA legal notice */}
+          {/* <div className="text-center">
             <p className={`text-xs ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
               This site is protected by reCAPTCHA and the Google{' '}
               <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="underline">
@@ -290,7 +265,7 @@ const AuthPage = ({ isDark = true, onThemeToggle }: AuthPageProps) => {
               </a>{' '}
               apply.
             </p>
-          </div>
+          </div> */}
           
           <div className="text-center">
             <Button
@@ -312,3 +287,5 @@ const AuthPage = ({ isDark = true, onThemeToggle }: AuthPageProps) => {
 };
 
 export default AuthPage;
+
+// End of AuthPage.tsx
