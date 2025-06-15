@@ -72,23 +72,57 @@ serve(async (req) => {
       });
     }
 
-    // Add 5 interpretations to both users
+    // Get current usage for both users to add credits properly
+    const { data: referrerUsage, error: referrerUsageError } = await supabaseClient
+      .from('user_usage')
+      .select('*')
+      .eq('user_id', referrerId)
+      .single();
+
+    if (referrerUsageError && referrerUsageError.code !== 'PGRST116') throw referrerUsageError;
+
+    const { data: newUserUsage, error: newUserUsageError } = await supabaseClient
+      .from('user_usage')
+      .select('*')
+      .eq('user_id', newUserId)
+      .single();
+
+    if (newUserUsageError && newUserUsageError.code !== 'PGRST116') throw newUserUsageError;
+
+    // Calculate new credit amounts
+    const referrerNewCredits = (referrerUsage?.paid_interpretations_remaining || 0) + 5;
+    const newUserNewCredits = (newUserUsage?.paid_interpretations_remaining || 0) + 5;
+
+    logStep("Adding credits", { 
+      referrerId, 
+      referrerCurrentCredits: referrerUsage?.paid_interpretations_remaining || 0,
+      referrerNewCredits,
+      newUserId,
+      newUserCurrentCredits: newUserUsage?.paid_interpretations_remaining || 0,
+      newUserNewCredits
+    });
+
+    // Update both users with added credits
     const promises = [
-      // Add to referrer
+      // Update referrer
       supabaseClient
         .from('user_usage')
         .upsert({
           user_id: referrerId,
-          paid_interpretations_remaining: 5,
+          free_interpretations_used: referrerUsage?.free_interpretations_used || 0,
+          paid_interpretations_remaining: referrerNewCredits,
+          referral_count: (referrerUsage?.referral_count || 0) + 1,
           updated_at: new Date().toISOString()
         }, { onConflict: 'user_id' }),
       
-      // Add to new user
+      // Update new user
       supabaseClient
         .from('user_usage')
         .upsert({
           user_id: newUserId,
-          paid_interpretations_remaining: 5,
+          free_interpretations_used: newUserUsage?.free_interpretations_used || 0,
+          paid_interpretations_remaining: newUserNewCredits,
+          referral_count: newUserUsage?.referral_count || 0,
           updated_at: new Date().toISOString()
         }, { onConflict: 'user_id' })
     ];
@@ -100,7 +134,7 @@ serve(async (req) => {
       if (result.error) throw result.error;
     }
 
-    logStep("Referral bonus applied successfully", { referrerId, newUserId });
+    logStep("Referral bonus applied successfully", { referrerId, newUserId, creditsAdded: 5 });
 
     return new Response(JSON.stringify({ success: true }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
