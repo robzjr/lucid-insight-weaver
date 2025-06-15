@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { useUserUsage } from '@/hooks/useUserUsage';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { toast } from 'sonner';
 
@@ -19,7 +18,6 @@ export interface Dream {
 
 export const useDreams = () => {
   const { user } = useAuth();
-  const { canInterpret, incrementUsage } = useUserUsage();
   const { profile } = useUserProfile();
   const queryClient = useQueryClient();
 
@@ -165,14 +163,10 @@ export const useDreams = () => {
 
   const interpretDreamMutation = useMutation({
     mutationFn: async (dreamText: string) => {
-      // Check if user can interpret before proceeding
-      if (!canInterpret) {
-        throw new Error('PAYMENT_REQUIRED');
-      }
+      // The `canInterpret` check is now done in the UI component before calling this.
 
       console.log('Starting dream interpretation...');
       
-      // Store the dream text in database immediately when interpretation starts
       const { data: dreamData, error: dreamError } = await supabase
         .from('dreams')
         .insert({
@@ -231,8 +225,7 @@ export const useDreams = () => {
         throw new Error('Failed to save interpretations');
       }
 
-      // Increment usage after successful interpretation
-      incrementUsage();
+      // The usage is now incremented in the UI component after this resolves.
 
       // Invalidate dreams query to refresh the list
       queryClient.invalidateQueries({ queryKey: ['dreams'] });
@@ -242,14 +235,11 @@ export const useDreams = () => {
     onError: (error) => {
       console.error('Error interpreting dream:', error);
       
-      if (error.message === 'PAYMENT_REQUIRED') {
-        // Don't show toast here, let the component handle it
-        return;
-      } else if (error.message.includes('Google AI API key not configured')) {
+      if (error.message.includes('Google AI API key not configured')) {
         toast.error('Google AI API key is not configured. Please contact support.');
       } else if (error.message.includes('API Error')) {
         toast.error(`Analysis failed: ${error.message}`);
-      } else {
+      } else if (error.message !== 'PAYMENT_REQUIRED') { // This error is handled in the UI now
         toast.error('Failed to analyze dream. Please try again.');
       }
     },
@@ -261,7 +251,7 @@ export const useDreams = () => {
     saveDream: saveDreamMutation.mutate,
     updateDream: (dreamId: string, newText: string) => updateDreamMutation.mutate({ dreamId, newText }),
     deleteDream: deleteDreamMutation.mutate,
-    interpretDream: interpretDreamMutation.mutate,
+    interpretDream: interpretDreamMutation.mutateAsync,
     isInterpreting: interpretDreamMutation.isPending,
     isSaving: saveDreamMutation.isPending,
     isUpdating: updateDreamMutation.isPending,

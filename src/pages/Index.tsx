@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Book, User, Calendar } from 'lucide-react';
 import Header from '@/components/Header';
@@ -27,7 +28,7 @@ const Index = () => {
   const { user, loading, signOut } = useAuth();
   const { dreams, interpretDream, saveDream, isInterpreting, interpretationResult, interpretationError } = useDreams();
   const { preferences, updatePreferences } = useUserPreferences();
-  const { usage, canInterpret, interpretationsLeft } = useUserUsage();
+  const { usage, canInterpret, interpretationsLeft, incrementUsage } = useUserUsage();
   const { profile, updateProfile, needsOnboarding } = useUserProfile();
   
   const [currentScreen, setCurrentScreen] = useState<ScreenType>('home');
@@ -90,10 +91,10 @@ const Index = () => {
     setCurrentDream(dreamText);
     try {
       await interpretDream(dreamText);
+      incrementUsage();
     } catch (error: any) {
-      if (error.message === 'PAYMENT_REQUIRED') {
-        setShowPaymentModal(true);
-      }
+      // The hook's `onError` will show a toast for other errors.
+      console.error("Dream interpretation failed:", error);
     }
   };
 
