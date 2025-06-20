@@ -4,9 +4,19 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Switch } from '@/components/ui/switch';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { Shield, Lock, Eye, EyeOff, HelpCircle } from 'lucide-react';
+import { Shield, Lock, Eye, EyeOff } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogAction,
+  AlertDialogCancel,
+} from '@/components/ui/alert-dialog';
+import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import PasswordStrengthMeter from '@/components/PasswordStrengthMeter';
@@ -16,6 +26,7 @@ interface SecuritySectionProps {
 }
 
 const SecuritySection = ({ isDark = true }: SecuritySectionProps) => {
+  const { user, signOut } = useAuth();
   const [showPasswordSection, setShowPasswordSection] = useState(false);
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: '',
@@ -28,7 +39,6 @@ const SecuritySection = ({ isDark = true }: SecuritySectionProps) => {
     confirm: false
   });
   const [isChangingPassword, setIsChangingPassword] = useState(false);
-  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
 
   const handlePasswordChange = async () => {
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
@@ -69,6 +79,24 @@ const SecuritySection = ({ isDark = true }: SecuritySectionProps) => {
       ...prev,
       [field]: !prev[field]
     }));
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!user) return;
+    try {
+      const { data, error } = await supabase.functions.invoke('delete-account', {
+        body: { userId: user.id }
+      });
+      if (error || !data?.success) {
+        throw error || new Error('Deletion failed');
+      }
+      toast.success('Account deleted');
+      await signOut();
+      window.location.reload();
+    } catch (err: any) {
+      console.error('Delete account error:', err);
+      toast.error(err.message || 'Failed to delete account');
+    }
   };
 
   return (
@@ -205,50 +233,33 @@ const SecuritySection = ({ isDark = true }: SecuritySectionProps) => {
           )}
         </div>
 
-        {/* Two-Factor Authentication */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Label htmlFor="twoFactor" className={`font-medium ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-              Two-Factor Authentication
-            </Label>
-            <Tooltip>
-              <TooltipTrigger>
-                <HelpCircle className={`h-4 w-4 ${isDark ? 'text-slate-500' : 'text-slate-400'}`} />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Add an extra layer of security to your account</p>
-              </TooltipContent>
-            </Tooltip>
-          </div>
-          <Switch
-            id="twoFactor"
-            checked={twoFactorEnabled}
-            onCheckedChange={setTwoFactorEnabled}
-            disabled
-          />
-        </div>
-        {twoFactorEnabled && (
-          <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-            Two-factor authentication is enabled for your account.
-          </p>
-        )}
 
         {/* Account Deletion */}
         <div className="pt-4 border-t border-slate-700">
           <div className="space-y-2">
-            <Label className={`font-medium text-red-500`}>
-              Danger Zone
-            </Label>
+            <Label className={`font-medium text-red-500`}>Danger Zone</Label>
             <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
               Once you delete your account, there is no going back. Please be certain.
             </p>
-            <Button
-              variant="destructive"
-              className="w-full"
-              onClick={() => toast.error('Account deletion is not available yet')}
-            >
-              Delete Account
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" className="w-full">
+                  Delete Account
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className={isDark ? 'glass-card border-slate-700' : ''}>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete account?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action will permanently remove your account and all associated data.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleDeleteAccount}>Delete</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
       </CardContent>
