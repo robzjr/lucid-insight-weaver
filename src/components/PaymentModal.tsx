@@ -7,6 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Sparkles, Zap, Star } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -17,6 +18,7 @@ interface PaymentModalProps {
 
 const PaymentModal = ({ isOpen, onClose, onPaymentSuccess, isDark = true }: PaymentModalProps) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
 
   const paymentPackages = [
@@ -89,9 +91,9 @@ const PaymentModal = ({ isOpen, onClose, onPaymentSuccess, isDark = true }: Paym
 
       if (error) throw error;
 
-      // Redirect to Paymob payment page
+      // Navigate to payment status page with Paymob URL
       if (data?.paymentUrl) {
-        window.open(data.paymentUrl, '_blank');
+        navigate(`/payment-status?transactionId=${transaction.id}&paymentUrl=${encodeURIComponent(data.paymentUrl)}`);
         toast.success('Redirecting to payment...');
         onClose();
       } else {
