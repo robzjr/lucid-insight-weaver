@@ -162,7 +162,7 @@ export const useDreams = () => {
   });
 
   const interpretDreamMutation = useMutation({
-    mutationFn: async (dreamText: string) => {
+    mutationFn: async ({ dreamText, language }: { dreamText: string; language?: string }) => {
       // The `canInterpret` check is now done in the UI component before calling this.
 
       console.log('Starting dream interpretation...');
@@ -191,9 +191,10 @@ export const useDreams = () => {
       };
 
       const { data, error } = await supabase.functions.invoke('interpret-dream', {
-        body: { 
+        body: {
           dreamText,
-          userContext 
+          userContext,
+          language
         }
       });
 

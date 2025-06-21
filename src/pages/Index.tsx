@@ -93,7 +93,7 @@ const Index = () => {
     setCurrentDream(dreamText);
     try {
       console.log('Starting dream interpretation process...');
-      await interpretDream(dreamText);
+      await interpretDream({ dreamText, language: preferences.language });
       console.log('Dream interpretation completed, now incrementing usage...');
       
       // Add a small delay to ensure the interpretation completed successfully
@@ -109,7 +109,7 @@ const Index = () => {
   const handlePaymentSuccess = () => {
     setShowPaymentModal(false);
     if (currentDream) {
-      interpretDream(currentDream);
+      interpretDream({ dreamText: currentDream, language: preferences.language });
     }
   };
 
