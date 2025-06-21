@@ -10,10 +10,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import PasswordStrengthMeter from '@/components/PasswordStrengthMeter';
 
-// Removed reCAPTCHA imports
-// import { useRecaptcha } from '@/hooks/useRecaptcha';
-// import { verifyRecaptcha } from '@/services/recaptcha';
-
 interface AuthPageProps {
   isDark?: boolean;
   onThemeToggle?: () => void;
@@ -28,15 +24,12 @@ const AuthPage = ({ isDark = true, onThemeToggle }: AuthPageProps) => {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // Removed useRecaptcha
-  // const { isLoaded: isRecaptchaLoaded, executeRecaptcha } = useRecaptcha();
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      // Removed reCAPTCHA logic
       if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({
           email,
@@ -68,7 +61,6 @@ const AuthPage = ({ isDark = true, onThemeToggle }: AuthPageProps) => {
   const handleGoogleAuth = async () => {
     setIsGoogleLoading(true);
     try {
-      // Removed reCAPTCHA logic for Google auth
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -251,22 +243,7 @@ const AuthPage = ({ isDark = true, onThemeToggle }: AuthPageProps) => {
               )}
             </Button>
           </form>
-          
-          {/* Removed reCAPTCHA legal notice */}
-          {/* <div className="text-center">
-            <p className={`text-xs ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
-              This site is protected by reCAPTCHA and the Google{' '}
-              <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="underline">
-                Privacy Policy
-              </a>{' '}
-              and{' '}
-              <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" className="underline">
-                Terms of Service
-              </a>{' '}
-              apply.
-            </p>
-          </div> */}
-          
+
           <div className="text-center">
             <Button
               variant="link"
