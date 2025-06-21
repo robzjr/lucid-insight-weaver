@@ -7,10 +7,9 @@ interface PasswordStrengthMeterProps {
   isDark?: boolean;
 }
 
-const PasswordStrengthMeter = ({ password, isDark = true }: PasswordStrengthMeterProps) => {
-  const calculateStrength = (password: string) => {
-    let score = 0;
-    let feedback = [];
+export const calculateStrength = (password: string) => {
+  let score = 0;
+  let feedback = [] as string[];
 
     if (password.length >= 8) {
       score += 25;
@@ -43,8 +42,10 @@ const PasswordStrengthMeter = ({ password, isDark = true }: PasswordStrengthMete
     const strength = score <= 25 ? 'Weak' : score <= 50 ? 'Fair' : score <= 75 ? 'Good' : 'Strong';
     const color = score <= 25 ? 'bg-red-500' : score <= 50 ? 'bg-yellow-500' : score <= 75 ? 'bg-blue-500' : 'bg-green-500';
 
-    return { score: Math.min(score, 100), strength, color, feedback };
-  };
+  return { score: Math.min(score, 100), strength, color, feedback };
+};
+
+const PasswordStrengthMeter = ({ password, isDark = true }: PasswordStrengthMeterProps) => {
 
   if (!password) return null;
 
