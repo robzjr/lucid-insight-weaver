@@ -29,7 +29,8 @@ const HelpSupport = ({ isDark = true }: HelpSupportProps) => {
     },
     {
       question: "What are the different interpretation styles?",
-      answer: "We offer three interpretation styles: Islamic (based on traditional Islamic dream interpretation), Spiritual (symbolic and intuitive insights), and Psychological (based on modern psychology and dream analysis)."
+      answer:
+        "We offer four interpretation styles: Islamic (based on traditional Islamic dream interpretation), Spiritual (symbolic and intuitive insights), Psychological (focusing on the mind and subconscious), and Mixed (a combination of all styles)."
     },
     {
       question: "How accurate are the dream interpretations?",

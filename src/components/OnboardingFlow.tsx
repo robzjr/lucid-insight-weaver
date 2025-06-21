@@ -177,8 +177,8 @@ const OnboardingFlow = ({ userName, onComplete, isDark = true }: OnboardingFlowP
             </div>
             
             <div className={`flex items-center space-x-2 p-3 rounded-lg border ${
-              formData.preferredStyle === 'spiritual' 
-                ? 'border-purple-500 bg-purple-500/10' 
+              formData.preferredStyle === 'spiritual'
+                ? 'border-purple-500 bg-purple-500/10'
                 : isDark ? 'border-slate-700' : 'border-slate-300'
             }`}>
               <RadioGroupItem value="spiritual" id="spiritual" />
@@ -186,6 +186,20 @@ const OnboardingFlow = ({ userName, onComplete, isDark = true }: OnboardingFlowP
                 <div className="font-medium">Spiritual</div>
                 <div className={`text-sm ${isDark ? 'text-slate-500' : 'text-slate-600'}`}>
                   Symbolic and intuitive meanings from universal wisdom
+                </div>
+              </Label>
+            </div>
+
+            <div className={`flex items-center space-x-2 p-3 rounded-lg border ${
+              formData.preferredStyle === 'mixed'
+                ? 'border-yellow-500 bg-yellow-500/10'
+                : isDark ? 'border-slate-700' : 'border-slate-300'
+            }`}>
+              <RadioGroupItem value="mixed" id="mixed" />
+              <Label htmlFor="mixed" className={`flex-1 cursor-pointer ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                <div className="font-medium">All styles</div>
+                <div className={`text-sm ${isDark ? 'text-slate-500' : 'text-slate-600'}`}>
+                  Combination of all interpretation styles
                 </div>
               </Label>
             </div>
