@@ -13,10 +13,11 @@ import PasswordStrengthMeter from '@/components/PasswordStrengthMeter';
 interface AuthPageProps {
   isDark?: boolean;
   onThemeToggle?: () => void;
+  defaultView?: 'login' | 'signup';
 }
 
-const AuthPage = ({ isDark = true, onThemeToggle }: AuthPageProps) => {
-  const [isLogin, setIsLogin] = useState(true);
+const AuthPage = ({ isDark = true, onThemeToggle, defaultView = 'login' }: AuthPageProps) => {
+  const [isLogin, setIsLogin] = useState(defaultView === 'login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
