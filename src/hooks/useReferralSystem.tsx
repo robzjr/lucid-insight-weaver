@@ -13,9 +13,14 @@ export const useReferralSystem = () => {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const referralCode = urlParams.get('ref');
-    
+
     if (referralCode && user) {
       processReferral(referralCode);
+      // Remove the referral code from the URL so it isn't processed again
+      urlParams.delete('ref');
+      const newQuery = urlParams.toString();
+      const newUrl = `${window.location.pathname}${newQuery ? `?${newQuery}` : ''}`;
+      window.history.replaceState({}, '', newUrl);
     }
   }, [user]);
 

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, Share2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useReferralSystem } from '@/hooks/useReferralSystem';
 
 interface ReferralSectionProps {
   userEmail: string;
@@ -11,10 +12,10 @@ interface ReferralSectionProps {
 }
 
 const ReferralSection = ({ userEmail, isDark = true }: ReferralSectionProps) => {
+  const { generateReferralLink } = useReferralSystem();
   const handleReferFriend = () => {
-    const baseUrl = window.location.origin;
-    const referralCode = userEmail.split('@')[0]; // Simple referral code
-    const referralText = `Check out Ramel - the AI-powered dream interpreter! Use my referral to get 5 free dream interpretations. Sign up here: ${baseUrl}?ref=${referralCode}`;
+    const referralLink = generateReferralLink();
+    const referralText = `Check out Ramel - the AI-powered dream interpreter! Use my referral to get 5 free dream interpretations. Sign up here: ${referralLink}`;
     
     if (navigator.share) {
       navigator.share({
