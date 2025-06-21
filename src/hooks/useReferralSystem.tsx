@@ -12,12 +12,16 @@ export const useReferralSystem = () => {
   // Check for referral code in URL when component mounts
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const referralCode = urlParams.get('ref');
+    const codeParam = urlParams.get('ref') || urlParams.get('referralCode');
+    const referrerId = urlParams.get('referrerId');
+    const referralCode = codeParam || (referrerId ? referrerId.slice(0, 8) : null);
 
     if (referralCode && user) {
       processReferral(referralCode);
-      // Remove the referral code from the URL so it isn't processed again
+      // Remove the referral params from the URL so they aren't processed again
       urlParams.delete('ref');
+      urlParams.delete('referralCode');
+      urlParams.delete('referrerId');
       const newQuery = urlParams.toString();
       const newUrl = `${window.location.pathname}${newQuery ? `?${newQuery}` : ''}`;
       window.history.replaceState({}, '', newUrl);

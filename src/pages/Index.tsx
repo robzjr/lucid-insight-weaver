@@ -12,6 +12,9 @@ import MyPlan from '@/components/MyPlan';
 import Navigation from '@/components/Navigation';
 import UsageDisplay from '@/components/UsageDisplay';
 import PaymentModal from '@/components/PaymentModal';
+import ReferralWelcomeModal from '@/components/ReferralWelcomeModal';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 import OnboardingFlow, { OnboardingData } from '@/components/OnboardingFlow';
 import CurrentPlanCard from '@/components/CurrentPlanCard';
 import ProfileCompletionBanner from '@/components/ProfileCompletionBanner';
@@ -39,6 +42,41 @@ const Index = () => {
   const [isDark, setIsDark] = useState(true);
   const [currentInterpretations, setCurrentInterpretations] = useState<any>(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [inviteSender, setInviteSender] = useState('A friend');
+  const [referralCode, setReferralCode] = useState<string | null>(null);
+  const [referrerId, setReferrerId] = useState<string | null>(null);
+  const navigate = useNavigate();
+
+  // Check for invite parameters on initial load
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('ref') || params.get('referralCode');
+    const id = params.get('referrerId');
+
+    if (code || id) {
+      setReferralCode(code || (id ? id.slice(0, 8) : null));
+      setReferrerId(id || null);
+
+      (async () => {
+        try {
+          let query = supabase.from('profiles').select('display_name,name').limit(1);
+          if (id) {
+            query = query.eq('id', id);
+          } else if (code) {
+            query = query.like('id', `${code}%`);
+          }
+          const { data } = await query.single();
+          const name = data?.display_name || data?.name;
+          if (name) setInviteSender(name);
+        } catch (e) {
+          console.error('Failed to fetch referrer name', e);
+        }
+      })();
+
+      setShowInviteModal(true);
+    }
+  }, []);
 
   // Sync theme with preferences
   useEffect(() => {
@@ -113,6 +151,15 @@ const Index = () => {
     }
   };
 
+  const handleStartTrial = () => {
+    const params = new URLSearchParams();
+    params.set('signup', '1');
+    if (referralCode) params.set('ref', referralCode);
+    if (referrerId) params.set('referrerId', referrerId);
+    navigate(`/?${params.toString()}`);
+    setShowInviteModal(false);
+  };
+
   const handleSaveDream = () => {
     if (currentDream && currentInterpretations) {
       saveDream({
@@ -170,7 +217,24 @@ const Index = () => {
 
   // Show auth page if user is not logged in
   if (!user) {
-    return <AuthPage isDark={isDark} onThemeToggle={handleThemeToggle} />;
+    const params = new URLSearchParams(window.location.search);
+    const defaultView = params.get('signup') === '1' ? 'signup' : 'login';
+    return (
+      <>
+        <AuthPage
+          isDark={isDark}
+          onThemeToggle={handleThemeToggle}
+          defaultView={defaultView as 'login' | 'signup'}
+        />
+        <ReferralWelcomeModal
+          isOpen={showInviteModal}
+          onClose={() => setShowInviteModal(false)}
+          onStart={handleStartTrial}
+          senderName={inviteSender}
+          isDark={isDark}
+        />
+      </>
+    );
   }
 
   // Show onboarding flow for new users
