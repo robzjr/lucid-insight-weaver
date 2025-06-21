@@ -5,6 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface DreamInputProps {
   onSubmit: (dream: string) => void;
@@ -15,6 +16,7 @@ interface DreamInputProps {
 const DreamInput = ({ onSubmit, isAnalyzing, isDark = true }: DreamInputProps) => {
   const [dreamText, setDreamText] = useState('');
   const [progress, setProgress] = useState(0);
+  const { t, language } = useLanguage();
 
   React.useEffect(() => {
     if (isAnalyzing) {
@@ -56,10 +58,10 @@ const DreamInput = ({ onSubmit, isAnalyzing, isDark = true }: DreamInputProps) =
             </div>
           </div>
           <CardTitle className="hologram-text text-xl">
-            Share Your Dream
+            {t('shareYourDream')}
           </CardTitle>
           <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-            Describe your dream in detail for the most accurate interpretation
+            {t('describeYourDream')}
           </p>
         </CardHeader>
         
@@ -67,7 +69,7 @@ const DreamInput = ({ onSubmit, isAnalyzing, isDark = true }: DreamInputProps) =
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <Label htmlFor="dream" className={`font-medium ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-                Dream Description
+                {t('dreamDescription')}
               </Label>
               <Textarea
                 id="dream"
@@ -87,7 +89,7 @@ const DreamInput = ({ onSubmit, isAnalyzing, isDark = true }: DreamInputProps) =
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                    Analyzing your dream...
+                    {t('analyzing')}
                   </span>
                   <span className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                     {Math.round(progress)}%
@@ -95,7 +97,7 @@ const DreamInput = ({ onSubmit, isAnalyzing, isDark = true }: DreamInputProps) =
                 </div>
                 <Progress value={progress} className="h-2" />
                 <div className={`text-center text-xs ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
-                  Estimated wait time: {estimatedWaitTime}
+                  {t('estimatedWaitTime')}: {estimatedWaitTime}
                 </div>
               </div>
             )}
@@ -110,12 +112,12 @@ const DreamInput = ({ onSubmit, isAnalyzing, isDark = true }: DreamInputProps) =
               {isAnalyzing ? (
                 <div className="flex items-center space-x-2">
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  <span>Interpreting your dream...</span>
+                  <span>{t('analyzing')}</span>
                 </div>
               ) : (
                 <div className="flex items-center space-x-2">
                   <div className="w-4 h-4 bg-white/20 rounded-full"></div>
-                  <span>Interpret My Dream</span>
+                  <span>{t('interpretDream')}</span>
                 </div>
               )}
             </Button>

@@ -6,6 +6,7 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Globe } from 'lucide-react';
 import { toast } from 'sonner';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface AppPreferencesSectionProps {
   userPreferences: any;
@@ -15,11 +16,16 @@ interface AppPreferencesSectionProps {
 }
 
 const AppPreferencesSection = ({ userPreferences, isDark = true, onThemeToggle, onUpdatePreferences }: AppPreferencesSectionProps) => {
+  const { t, setLanguage } = useLanguage();
+
   const handleLanguageChange = (language: string) => {
     onUpdatePreferences({
       language: language
     });
-    toast.success(`Language changed to ${language === 'ar' ? 'Arabic' : 'English'}`);
+    setLanguage(language as 'en' | 'ar');
+    toast.success(
+      t('language') + ' ' + (language === 'ar' ? 'العربية' : 'English')
+    );
   };
 
   return (
@@ -33,7 +39,7 @@ const AppPreferencesSection = ({ userPreferences, isDark = true, onThemeToggle, 
         <div className="flex items-center justify-between">
           <div>
             <Label htmlFor="theme" className={`font-medium ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-              Dark Mode
+              {t('darkMode')}
             </Label>
             <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
               Use dark theme across the app
@@ -47,17 +53,17 @@ const AppPreferencesSection = ({ userPreferences, isDark = true, onThemeToggle, 
             <div className="flex items-center space-x-2">
               <Globe className={`h-4 w-4 ${isDark ? 'text-slate-400' : 'text-slate-600'}`} />
               <Label htmlFor="language" className={`font-medium ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-                Language
+                {t('language')}
               </Label>
             </div>
             <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-              Choose your preferred language
+              {t('chooseLanguage')}
             </p>
           </div>
           <div className="w-32">
             <Select value={userPreferences?.language || 'en'} onValueChange={handleLanguageChange}>
               <SelectTrigger className={isDark ? 'bg-slate-900/50 border-slate-700 text-slate-200' : 'bg-white border-slate-300'}>
-                <SelectValue placeholder="Language" />
+                <SelectValue placeholder={t('language')} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="en">English</SelectItem>
