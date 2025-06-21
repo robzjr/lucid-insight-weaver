@@ -14,7 +14,7 @@ serve(async (req) => {
   try {
     console.log('Starting dream interpretation request...')
     
-    const { dreamText, userContext } = await req.json()
+    const { dreamText, userContext, language } = await req.json()
     console.log('Received dream text:', dreamText?.substring(0, 100) + '...')
     console.log('User context:', userContext)
     
@@ -37,8 +37,9 @@ serve(async (req) => {
       )
     }
 
-    // Detect if the dream text contains Arabic characters
-    const isArabic = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/.test(dreamText)
+    // Detect if Arabic is requested or if the dream text contains Arabic characters
+    const isArabic = language === 'ar' || /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/.test(dreamText)
+    console.log('Requested language:', language)
     console.log('Detected Arabic text:', isArabic)
 
     // Build user context string for personalization
