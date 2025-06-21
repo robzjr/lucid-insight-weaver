@@ -20,6 +20,7 @@ import { useDreams } from '@/hooks/useDreams';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 import { useUserUsage } from '@/hooks/useUserUsage';
 import { useUserProfile } from '@/hooks/useUserProfile';
+import { useReferralSystem } from '@/hooks/useReferralSystem';
 
 type ScreenType = 'home' | 'interpretation' | 'history' | 'settings' | 'subscription' | 'help' | 'myplan';
 
@@ -29,6 +30,8 @@ const Index = () => {
   const { preferences, updatePreferences } = useUserPreferences();
   const { usage, canInterpret, interpretationsLeft, incrementUsage } = useUserUsage();
   const { profile, updateProfile, needsOnboarding } = useUserProfile();
+  // Initialize referral system to handle referral codes in the URL
+  useReferralSystem();
   
   const [currentScreen, setCurrentScreen] = useState<ScreenType>('home');
   const [currentDream, setCurrentDream] = useState<string>('');
